@@ -107,9 +107,10 @@ latexmk -g
 | `main.tex` | 主文件，填写演示内容（元数据 + 各 Section 幻灯片） |
 | `beamer-style.sty` | 样式配置（主题、颜色、字体、页脚、参考文献设置） |
 | `refs.bib` | BibTeX 参考文献数据库 |
-| `latexmkrc` | latexmk 编译配置（指定 xelatex 引擎） |
+| `latexmkrc` | latexmk 编译配置（xelatex 引擎 + `build/` 中间产物目录） |
+| `build/` | 编译中间产物目录（自动生成，已 git-ignore） |
 | `img/` | 图片资源目录 |
-| `main.pdf` | 编译生成的 PDF 输出（已加入 `.gitignore`） |
+| `main.pdf` | 编译生成的 PDF 输出（`.gitignore` 已忽略） |
 
 ## 常见问题
 
@@ -141,6 +142,7 @@ beamer-template/
 ├── refs.bib               ← 参考文献
 ├── latexmkrc              ← 编译配置
 ├── .gitignore
+├── build/                 ← 编译中间产物（自动生成）
 ├── img/                   ← 图片资源
 ├── docs/                  ← 项目规划文档
 ├── Archive/               ← 历史归档

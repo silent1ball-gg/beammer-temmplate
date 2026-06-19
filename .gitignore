@@ -1,28 +1,5 @@
-# LaTeX build artifacts
-*.aux
-*.bbl
-*.bcf
-*.blg
-*.fdb_latexmk
-*.fls
-*.glg
-*.glo
-*.gls
-*.idx
-*.ilg
-*.ind
-*.ist
-*.lof
-*.log
-*.lot
-*.nav
-*.out
-*.run.xml
-*.snm
-*.synctex.gz
-*.toc
-*.vrb
-*.xdv
+# Build artifacts (redirected to build/ by latexmkrc)
+build/
 
 # Generated PDF (comment out if you want to track PDFs in git)
 *.pdf
