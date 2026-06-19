@@ -1,0 +1,131 @@
+{
+  // ============================================================
+  //  VS Code + LaTeX Workshop 工作区配置
+  //  需要安装扩展: LaTeX Workshop (James Yu)
+  // ============================================================
+
+  // ---------- 编译工具链 ----------
+  // 项目使用 latexmk + xelatex（配置见 latexmkrc）
+  "latex-workshop.latex.recipe.default": "latexmk (xelatex)",
+
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk (xelatex)",
+      "tools": ["latexmk"]
+    },
+    {
+      "name": "xelatex → biber → xelatex ×2",
+      "tools": ["xelatex", "biber", "xelatex", "xelatex"]
+    }
+  ],
+
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      "name": "xelatex",
+      "command": "xelatex",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-output-directory=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      "name": "biber",
+      "command": "biber",
+      "args": [
+        "%DOCFILE%"
+      ],
+      "env": {}
+    }
+  ],
+
+  // ---------- 自动编译 ----------
+  "latex-workshop.latex.autoBuild.run": "onSave",
+  "latex-workshop.latex.autoClean.run": "onBuilt",
+
+  // ---------- PDF 预览 ----------
+  // "tab" — VS Code 内置标签页; "browser" — 系统默认浏览器; "external" — 外部 PDF 阅读器
+  "latex-workshop.view.pdf.viewer": "tab",
+
+  // Synctex: 双击 PDF 跳转到源码（macOS 下 Cmd+Click 或双击）
+  "latex-workshop.view.pdf.internal.synctex.keybinding": "double-click",
+
+  // ---------- 辅助文件清理 ----------
+  // 匹配 latexmkrc 中 $clean_ext 的扩展名
+  "latex-workshop.latex.clean.fileTypes": [
+    "*.aux",
+    "*.bbl",
+    "*.bcf",
+    "*.blg",
+    "*.fdb_latexmk",
+    "*.fls",
+    "*.glg",
+    "*.glo",
+    "*.gls",
+    "*.idx",
+    "*.ilg",
+    "*.ind",
+    "*.ist",
+    "*.lof",
+    "*.log",
+    "*.lot",
+    "*.nav",
+    "*.out",
+    "*.run.xml",
+    "*.snm",
+    "*.synctex.gz",
+    "*.toc",
+    "*.vrb",
+    "*.xdv"
+  ],
+
+  // ---------- 快捷补全 ----------
+  "latex-workshop.surroundSelectionWithLatexCommand": true,
+  "latex-workshop.latex.autoClosingBrackets": true,
+
+  // ---------- 格式化 ----------
+  "latex-workshop.latex.formatting.formatter": "latexindent",
+  "latex-workshop.latex.indent": 2,
+
+  // ---------- 文件关联 ----------
+  "files.associations": {
+    "latexmkrc": "perl",
+    "*.sty": "tex",
+    "*.cls": "tex",
+    "*.bib": "bibtex"
+  },
+
+  // ---------- 排除辅助文件（文件浏览器和搜索） ----------
+  "files.exclude": {
+    "**/*.aux": true,
+    "**/*.bbl": true,
+    "**/*.bcf": true,
+    "**/*.blg": true,
+    "**/*.fdb_latexmk": true,
+    "**/*.fls": true,
+    "**/*.log": true,
+    "**/*.nav": true,
+    "**/*.out": true,
+    "**/*.run.xml": true,
+    "**/*.snm": true,
+    "**/*.synctex.gz": true,
+    "**/*.toc": true,
+    "**/*.xdv": true,
+    "build/": true
+  }
+}

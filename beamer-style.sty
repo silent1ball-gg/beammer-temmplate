@@ -7,6 +7,14 @@
 
 \ProvidesPackage{beamer-style}
 
+% ---------- Engine Check ----------
+% This template requires XeLaTeX for Unicode + system font support.
+% If you see an error here, compile with: latexmk
+% (or manually: xelatex main.tex)
+
+\RequirePackage{iftex}
+\RequireXeTeX
+
 % ---------- Beamer Theme ----------
 % metropolis: clean modern look for academic / tech presentations.
 % Loaded first — its font theme sets Fira Sans / Fira Mono for English text.

@@ -51,6 +51,31 @@ latexmk -C
 latexmk -g
 ```
 
+### VS Code 编译
+
+项目已包含 `.vscode/settings.json`，安装 **LaTeX Workshop** 扩展后即可开箱即用：
+
+```bash
+# 1. 安装 VS Code 扩展（二选一）
+code --install-extensions James-Yu.latex-workshop    # 命令行安装
+# 或在 VS Code 扩展市场搜索 "LaTeX Workshop"
+
+# 2. 用 VS Code 打开项目
+code beamer-template
+
+# 3. 打开 main.tex，保存即自动编译
+# 4. 右侧分屏自动打开 PDF 预览
+```
+
+| 快捷键 | 功能 |
+|--------|------|
+| `Cmd+Alt+B` | 手动编译 |
+| `Cmd+Alt+V` | 打开 PDF 预览 |
+| `Cmd+Alt+C` | 清理辅助文件 |
+| 双击 PDF 中的文本 | 跳转到源码对应位置（Synctex） |
+
+> **提示**：保存文件时会自动触发编译（`onSave`）。如需关闭，修改 `.vscode/settings.json` 中 `latex-workshop.latex.autoBuild.run` 为 `"never"`。
+
 ## 自定义指南
 
 ### 修改内容
@@ -142,6 +167,7 @@ beamer-template/
 ├── refs.bib               ← 参考文献
 ├── latexmkrc              ← 编译配置
 ├── .gitignore
+├── .vscode/               ← VS Code + LaTeX Workshop 配置
 ├── build/                 ← 编译中间产物（自动生成）
 ├── img/                   ← 图片资源
 ├── docs/                  ← 项目规划文档
