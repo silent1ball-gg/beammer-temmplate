@@ -1,0 +1,46 @@
+# File Structure
+
+## Proposed Tree
+
+> ✅ 以下为项目当前实际文件树（与 MVP 计划一致）。
+
+```text
+beamer-template/
+├── README.md                  # 项目入口：依赖、编译、自定义、FAQ
+├── main.tex                   # 主模板文件，用户在此填写演示内容
+├── beamer-style.sty           # 样式配置：主题、CJK字体、颜色、页脚、参考文献
+├── refs.bib                   # BibTeX 参考文献示例文件
+├── latexmkrc                  # latexmk 编译配置（xelatex 引擎）
+├── .gitignore                 # Git 忽略规则（编译产物 + .DS_Store）
+├── img/                       # 图片资源目录（用户自行添加图片）
+├── docs/
+│   ├── goal.md                # 目标与范围定义
+│   ├── mvp-flow.md            # MVP 里程碑计划
+│   ├── file-structure.md      # 本文档（文件结构说明）
+│   └── decisions.md           # 技术决策与已知限制
+├── Archive/                   # 历史归档（旧版本文档、被替换方案）
+└── experiments/               # 实验性功能隔离工作区
+```
+
+## Path Responsibilities
+
+- `README.md`：项目入口文档。覆盖依赖安装（MacTeX）、编译命令（`latexmk`）、自定义方法（内容、样式、图片、参考文献）、常见问题。
+- `main.tex`：用户操作的主文件。17 帧学术答辩模板，包含标题页（含导师/答辩委员会）、目录、研究背景、相关工作、研究方法（架构 + 技术选型表）、实验结果（含图表帧）、总结与展望、致谢、参考文献。各 Section 均附注释标注可修改点。
+- `beamer-style.sty`：所有外观配置集中在此。包括：
+  - `\usetheme{metropolis}` — Beamer 主题
+  - `xeCJK` + PingFang SC — 中文字体配置
+  - `biblatex` (biber, numeric) — 参考文献引擎
+  - `booktabs` — 专业表格
+  - 自定义颜色主题（学术蓝 #005A9C）
+  - 自定义页脚页码模板
+  - 图表编号、参考文献样式、目录格式
+- `refs.bib`：BibTeX 格式的参考文献示例条目（article + book），供 `\cite` 和 `\printbibliography` 使用。
+- `latexmkrc`：latexmk 配置文件。指定 `pdf_mode=5` (xelatex)、自定义清理扩展名列表。
+- `.gitignore`：忽略 LaTeX 编译产物（`.aux`、`.log`、`.out`、`*.pdf` 等）和 `.DS_Store`。
+- `img/`：用户存放图片的目录。模板中使用 `mwe` 包的 `example-image` 作为占位图，用户替换为实际图片。
+- `docs/goal.md`：项目目标、用户分析、MVP 定义、假设、非目标、目标用户、成功标准。
+- `docs/mvp-flow.md`：四大里程碑从项目基础到验证收尾的完整步骤。
+- `docs/file-structure.md`：本文档。
+- `docs/decisions.md`：技术路线、初始选择（编译器、主题、字体、参考文献引擎）、开放问题、约束、已知限制。
+- `Archive/`：历史归档目录，存放被替换的旧版本文档和设计方案。
+- `experiments/`：实验性功能隔离工作区，每个实验有独立的 `docs/` 和 `Archive/`。

@@ -1,0 +1,235 @@
+% ============================================================
+%  main.tex — 学术答辩 Beamer 演示文稿模板
+%  ============================================================
+%  使用方式：
+%    1. 修改下方「元数据」区的标题、作者、导师等信息
+%    2. 在各 Section 中替换示例内容为你的正文
+%    3. 将图片放入 img/ 目录，用 \includegraphics{img/xxx.png} 引用
+%    4. 参考文献放入 refs.bib，用 \cite{key} 引用
+%    5. 终端运行 latexmk 即可编译
+%  ============================================================
+
+\documentclass[aspectratio=169]{beamer}
+
+% ---------- Style ----------
+\usepackage{beamer-style}
+
+% ============================================================
+%  元数据 — 修改为你自己的信息
+% ============================================================
+\title{论文题目：基于 \LaTeX{} Beamer 的\\学术答辩演示文稿模板设计}
+\subtitle{硕士研究生学位论文答辩}
+\author{张\textbf{三}}
+\institute{某某大学 ~ 计算机科学与技术学院}
+\date{2026 年 6 月 19 日}
+
+\begin{document}
+
+% ============================================================
+%  1. 标题页 (Title Page)
+% ============================================================
+
+\begin{frame}[shrink]
+  \titlepage
+
+  \vspace{-2em}
+  \begin{center}
+    \footnotesize
+    \textbf{指导教师：}李四 ~ 教授 \\[0.2em]
+    \textbf{答辩委员会：}王五 ~ 教授 \quad 赵六 ~ 副教授 \quad 钱七 ~ 研究员
+  \end{center}
+\end{frame}
+
+% ============================================================
+%  2. 目录页 (Table of Contents)
+% ============================================================
+
+\begin{frame}{目录}
+  \tableofcontents
+\end{frame}
+
+% ============================================================
+%  3. 正文内容 — 按 Section 组织
+% ============================================================
+
+% --- Section: 研究背景 ---
+\section{研究背景与意义}
+
+\begin{frame}{研究背景}
+  \begin{itemize}
+    \item 随着信息技术的快速发展，学术演示文稿已成为知识传播的核心媒介之一。
+    \item \LaTeX{} Beamer 因其专业的排版质量和数学公式支持，在理工科领域被广泛使用。
+    \item 然而，从零配置 Beamer 主题、字体、配色等工作重复且繁琐，缺乏开箱即用的中文模板。
+  \end{itemize}
+
+  \begin{alertblock}{核心问题}
+    如何提供一套专业、可复用、支持中文的 Beamer 模板，降低学术答辩演示文稿的制作成本？
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{相关工作}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{现有方案}
+      \begin{itemize}
+        \item Overleaf 官方模板库
+        \item 各高校自建 \LaTeX{} 模板
+        \item 商业软件 (PowerPoint / Keynote)
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{局限性}
+      \begin{itemize}
+        \item 中文支持不完善
+        \item 样式与内容耦合，定制困难
+        \item 平台锁定，不便于版本管理
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{1em}
+  \begin{exampleblock}{本文方案}
+    采用 XeLaTeX + Beamer (metropolis) + PingFang SC 的技术路线，
+    实现样式分离、即开即用的中文答辩模板。
+  \end{exampleblock}
+\end{frame}
+
+% --- Section: 研究方法 ---
+\section{研究方法}
+
+\begin{frame}{模板架构设计}
+  本模板遵循 \textbf{样式与内容分离} 的设计原则：
+
+  \vspace{0.5em}
+  \begin{description}
+    \item[\texttt{main.tex}] 用户编辑的主文件，仅包含内容和元数据。
+    \item[\texttt{beamer-style.sty}] 样式配置文件，集中管理主题、颜色、字体。
+    \item[\texttt{latexmkrc}] 编译配置，一键生成 PDF。
+  \end{description}
+
+  \vspace{1em}
+  \begin{center}
+    \small
+    \texttt{用户修改 main.tex → latexmk → 专业排版的 PDF}
+  \end{center}
+\end{frame}
+
+\begin{frame}{技术选型说明}
+  \begin{table}
+    \centering
+    \begin{tabular}{lll}
+      \toprule
+      \textbf{组件} & \textbf{选型} & \textbf{理由} \\
+      \midrule
+      编译器   & XeLaTeX  & 原生 Unicode + 系统字体支持 \\
+      Beamer 主题 & metropolis & 简洁现代，适配学术场景 \\
+      中文字体 & PingFang SC & macOS 自带，无需额外安装 \\
+      参考文献 & biber + biblatex & Unicode 兼容，比 BibTeX 更现代 \\
+      \bottomrule
+    \end{tabular}
+    \caption{技术选型概览}
+  \end{table}
+\end{frame}
+
+% --- Section: 实验结果 ---
+\section{实验结果与分析}
+
+\begin{frame}{编译性能测试}
+  \begin{itemize}
+    \item 测试环境：macOS + TeX Live 2026，XeLaTeX 编译器
+    \item 测试文档：7 页答辩模板（含图表、公式、参考文献）
+  \end{itemize}
+
+  \vspace{1em}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \centering
+      \textbf{首次编译} \\
+      \vspace{0.3em}
+      {\large 2.3 秒}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \textbf{增量编译} \\
+      \vspace{0.3em}
+      {\large 0.8 秒}
+    \end{column}
+  \end{columns}
+
+  \vspace{1em}
+  \begin{block}{结论}
+    模板编译速度快，latexmk 自动处理多次编译，无需用户干预交叉引用和目录生成。
+  \end{block}
+\end{frame}
+
+% ============================================================
+%  4. 图表页 (Figure Slide)
+% ============================================================
+
+\begin{frame}[shrink]{实验结果可视化}
+  \begin{figure}
+    \centering
+    % 占位图：替换为你的实际图片，例如：
+    % \includegraphics[width=0.65\textwidth]{img/your-result.png}
+    \includegraphics[width=0.55\textwidth]{example-image}
+    \caption{实验结果对比图（请替换为实际数据图表）}
+    \label{fig:result}
+  \end{figure}
+
+  \vspace{-0.8em}
+  \begin{itemize}
+    \footnotesize
+    \item 更多图片示例：\texttt{example-image-a}, \texttt{example-image-b}, \texttt{example-image-golden}
+    \item 推荐使用 PDF/PNG 格式矢量图，缩放不失真
+  \end{itemize}
+\end{frame}
+
+% --- Section: 总结与展望 ---
+\section{总结与展望}
+
+\begin{frame}{主要贡献}
+  \begin{enumerate}
+    \item 设计并实现了一套 \textbf{样式与内容分离} 的 Beamer 中文模板。
+    \item 基于 XeLaTeX + metropolis + PingFang SC，确保 \textbf{开箱即用}。
+    \item 覆盖学术答辩常见幻灯片类型：标题、目录、正文、图表、参考文献。
+    \item 编译命令简化为 \texttt{latexmk}，\textbf{零学习成本}。
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{未来工作}
+  \begin{itemize}
+    \item 支持多套颜色主题切换（亮色 / 暗色 / 学校标准色）。
+    \item 提供 Overleaf 兼容的单文件版本。
+    \item 集成 minted 宏包实现代码高亮。
+    \item 添加 4:3 屏幕比例选项。
+  \end{itemize}
+
+  \vspace{1em}
+  \begin{center}
+    \large 欢迎贡献：\texttt{https://github.com/yourname/beamer-template}
+  \end{center}
+\end{frame}
+
+% ============================================================
+%  5. 致谢页 (Acknowledgments)
+% ============================================================
+
+\begin{frame}[c]{}
+  \centering
+  \Huge 谢谢！\\[0.5em]
+  \Large 请各位老师批评指正
+\end{frame}
+
+% ============================================================
+%  6. 参考文献页 (References)
+% ============================================================
+
+\section*{参考文献}
+
+\begin{frame}[allowframebreaks]{参考文献}
+  % 列出所有 refs.bib 中的条目（即使未在正文中 \cite）
+  \nocite{*}
+  \printbibliography
+\end{frame}
+
+\end{document}

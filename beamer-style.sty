@@ -1,0 +1,68 @@
+% ============================================================
+%  beamer-style.sty — Beamer Style Configuration
+%  ============================================================
+%  Template for academic defense / technical presentations.
+%  Font: Fira Sans (en) + PingFang SC (zh), XeLaTeX required.
+% ============================================================
+
+\ProvidesPackage{beamer-style}
+
+% ---------- Beamer Theme ----------
+% metropolis: clean modern look for academic / tech presentations.
+% Loaded first — its font theme sets Fira Sans / Fira Mono for English text.
+% Other built-in alternatives: Madrid, CambridgeUS, Copenhagen, Berlin.
+
+\usetheme{metropolis}
+
+% ---------- CJK Font Setup ----------
+% Override only the CJK portion; metropolis handles English fonts.
+
+\usepackage{xeCJK}
+
+% PingFang SC ships with macOS. For cross-platform, replace with:
+%   \setCJKsansfont{Noto Sans CJK SC}
+\setCJKsansfont{PingFang SC}[
+  BoldFont   = {PingFangSC-Semibold},
+]
+
+\setCJKmonofont{PingFang SC}[
+  BoldFont   = {PingFangSC-Semibold},
+  AutoFakeSlant = 0.2,
+]
+
+% ---------- Bibliography ----------
+\usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
+\addbibresource{refs.bib}
+
+% ---------- Extra Packages ----------
+\usepackage{booktabs}   % Professional tables (\toprule, \midrule, \bottomrule)
+
+% ---------- Color Palette ----------
+% Academic blue as accent — swap the hex values to change mood.
+
+\definecolor{AccentBlue}{HTML}{005A9C}    % primary accent
+\definecolor{DarkText}{HTML}{2B2B2B}      % body text
+\definecolor{LightBG}{HTML}{FAFAFA}       % page background
+
+\setbeamercolor{progress bar}{fg=AccentBlue}
+\setbeamercolor{title separator}{fg=AccentBlue}
+\setbeamercolor{structure}{fg=AccentBlue}
+\setbeamercolor{normal text}{fg=DarkText, bg=LightBG}
+\setbeamercolor{alerted text}{fg=AccentBlue}
+\setbeamercolor{example text}{fg=AccentBlue!60!black}
+\setbeamercolor{frametitle}{fg=white, bg=DarkText}
+
+% ---------- Footer: Page Numbers ----------
+\setbeamertemplate{footline}{%
+  \hfill%
+  \usebeamercolor[fg]{page number in head/foot}%
+  \usebeamerfont{page number in head/foot}%
+  \insertframenumber\,/\,\inserttotalframenumber\hspace{1.5em}\vspace{4pt}%
+}
+
+% ---------- Misc Templates ----------
+\setbeamertemplate{caption}[numbered]           % Numbered figures
+\setbeamertemplate{bibliography item}{\insertbiblabel}  % Bib item style
+\setbeamertemplate{section in toc}[sections numbered]   % Numbered TOC sections
+
+\endinput
