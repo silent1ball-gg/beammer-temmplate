@@ -2,7 +2,7 @@
 build/
 
 # Generated PDF (comment out if you want to track PDFs in git)
-*.pdf
+#*.pdf
 
 # macOS
 .DS_Store
