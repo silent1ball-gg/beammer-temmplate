@@ -44,8 +44,7 @@
 - **Fira Sans 未生效**：macOS 的 XeTeX 引擎无法通过字体族名找到 TeX Live 中的 Fira Sans 字体文件。metropolis 主题回退到默认的 Latin Modern Sans。视觉效果可接受，如需修复，需在 `beamer-style.sty` 中用 `Extension=.otf` + `UprightFont=*-Regular` 的文件名方式显式指定。
 - **仅支持 XeLaTeX**：模板依赖 `xeCJK` 宏包处理中文，该宏包仅适用于 XeLaTeX。pdfLaTeX 需要 CJK 宏包方案（完全不同），LuaLaTeX 理论上可用但未经测试。
 - **中文字体绑定 macOS**：默认使用 PingFang SC（苹方-简），其他平台需手动替换字体配置。
-- **单主题配色**：仅提供一套学术蓝 metropolis 主题配色，多套颜色主题切换尚未实现。
-- **预设场景有限**：当前提供「学术答辩」和「组会汇报」2 种预设场景，「技术分享」等场景待后续添加。
+- **单主题**：MVP 仅提供一套 metropolis 主题配色，多主题切换尚未实现。
 - **无代码高亮**：暂未集成 `minted` 或 `listings` 宏包，代码展示需用户自行添加。
 - **无暗色主题**：仅提供亮色（白底）版本，暗色背景待后续添加。
 
@@ -75,40 +74,3 @@
 
 - **XeLaTeX 版本**：`-aux-directory` 选项在较新版本 XeTeX 中支持良好（TeX Live 2020+）。当前环境 TeX Live 2026 无问题。
 <!-- feature:build-dir:end -->
-
-<!-- feature:groupmeeting-preset:start -->
-## Feature Decision: groupmeeting-preset
-
-### Long-Term Route Fit
-
-- 当前技术路线核心是**样式与内容分离**（`.sty` + `.tex`）。本 feature 在「内容层」新增一个 `.tex` 文件，样式层（`beamer-style.sty`）完全复用，不改变也不依赖样式的任何修改。
-- 未来可能发展出更多预设场景（技术分享、论文汇报、学术报告等），扩展模式清晰：每个场景一个 `.tex` 内容文件 + 一个共用 `.sty` 样式文件。这条模式从 1 个场景到 N 个场景都无需推倒重来。
-- 不在此 feature 中引入宏集抽象或条件编译：当前仅 2 个场景，过度抽象（如提取 `beamer-base.tex` 或 `\newcommand` 宏集）会增加维护成本和用户理解难度。等场景数量 ≥ 4 且代码重复明显时再考虑提炼。
-
-### Chosen Approach
-
-- **方案：独立的 `main-groupmeeting.tex` 文件**，直接 `\usepackage{beamer-style}`，与 `main.tex` 平级且对等。
-- **备选方案 A**：参数化单文件（通过 `\input{scenario-config.tex}` 切换幻灯片结构）→ 过度工程，用户需要在多个文件间跳转才能理解模板逻辑，且 LaTeX 社区不习惯这种「配置文件」模式。
-- **备选方案 B**：将共同结构（documentclass、usepackage、元数据模式）提取为 `beamer-base.tex`，两种场景各自 `\input{beamer-base}` → 虽然符合 DRY 原则，但当前两个文件的共同部分不到 30 行，提取带来的间接性代价大于重复代码的维护成本。
-- **备选方案 C**：通过 `\mode<presentation>` 或 `\ifdefined` 条件编译在同一文件中切换场景 → 用户需要修改非直观的 LaTeX 命令，学习成本高，不符合模板「开箱即用」的目标。
-- **选择依据**：保持简单、直白。每个预设场景一个独立、自包含的 `.tex` 文件，用户复制后即可开始编辑。这是 LaTeX 模板领域的主流做法（如各大高校学位论文模板库：`main-master.tex`、`main-phd.tex` 各自独立）。独立文件还有额外好处：用户可以同时拥有两份不同的演示文稿（同一项目中），互不干扰。
-
-### Compatibility and Migration
-
-- **向后兼容**：不修改 `main.tex`、`beamer-style.sty`、`latexmkrc`、`refs.bib`，现有用户完全不受影响。
-- **无迁移成本**：现有用户无需任何操作即可 `git pull` 升级。组会模板作为新增文件出现，不会产生合并冲突。
-- **latexmk 编译方式**：`latexmk` 默认查找并编译 `main.tex`。编译组会模板需使用 `latexmk -jobname=main-groupmeeting main-groupmeeting.tex`，避免 PDF 被命名为 `main.pdf` 而覆盖。README 中将说明两种编译方式。VS Code LaTeX Workshop 用户打开 `main-groupmeeting.tex` 后保存即可自动编译，无需特殊配置。
-- **`.gitignore`**：现有 `*.pdf` 规则已忽略所有 PDF 文件，无需修改。
-
-### Open Questions
-
-- **是否需要单独的 `refs-groupmeeting.bib`？** → MVP 不需要。组会汇报通常文献引用量少，可直接共用 `refs.bib`。如用户需要独立文献库，可自行创建并在 `main-groupmeeting.tex` 中的 `\addbibresource` 修改引用路径。
-- **是否需要提供「空白模板」版本？** → 当前不提供。两种预设场景本身即接近空白（用户替换内容即可），再提供空白版本意义不大。如用户反馈有需求，后续在 Later 中加入 `main-blank.tex`。
-
-### Constraints
-
-- **平台约束**：不变（macOS 优先，中文字体绑定 PingFang SC）。
-- **编译约束**：需要用户使用 `-jobname` 参数或通过 LaTeX Workshop 默认行为编译非 `main.tex` 文件。已在 README 中说明。
-- **依赖约束**：零新增宏包依赖，复用现有 `beamer-style.sty` 的全部依赖。
-- **质量约束**：组会模板的注释密度和详细程度需与 `main.tex` 保持一致（每帧都有注释，元数据区有说明），不应成为「二等公民」。
-<!-- feature:groupmeeting-preset:end -->

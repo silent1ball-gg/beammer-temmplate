@@ -78,3 +78,93 @@
 
 - （已完成）`.gitignore` 中 `build/` 规则已生效。
 <!-- feature:build-dir:end -->
+
+<!-- feature:groupmeeting-preset:start -->
+## Feature Flow: groupmeeting-preset
+
+### Milestone 1: Current State and Route Fit ✅
+
+- [x] 当前 MVP 已完成：`main.tex`（学术答辩模板，17 页）、`beamer-style.sty`（metropolis + PingFang SC + 学术蓝配色）、`latexmkrc`（xelatex + build/ 隔离）、`refs.bib` 均稳定可用。
+- [x] 技术路线确认：XeLaTeX + Beamer (metropolis) + PingFang SC + latexmk，样式与内容分离（`.sty` + `.tex`）。
+- [x] 本 feature 不引入新工具、新宏包、新样式，仅新增一个内容模板文件。完全符合并延续现有技术路线。
+- [x] Verification：`latexmk -C && latexmk` 实际编译 `main.tex`，结果 — 17 页 PDF，0 错误，0 Overfull 警告。已知警告（Fira Sans 回退 × 2、Frame shrunk × 2、fontspec、rerun）与基线一致。回归基线已建立。
+
+### Milestone 2: Slide Structure Design ✅
+
+- [x] 设计组会汇报的幻灯片结构（共 6 帧，约 10-12 页 PDF），与学术答辩模板的差异对比如下：
+
+| # | 学术答辩 (main.tex) | 组会汇报 (main-groupmeeting.tex) |
+|---|-------------------|--------------------------------|
+| 1 | 标题页 + 答辩委员会 | 标题页 + 导师/课题组 |
+| 2 | 目录 (`\tableofcontents`) | 本周工作概览（itemize 摘要，2-3 项） |
+| 3 | 研究背景 | 工作进展详情 I — 具体展开，可含 block/图表 |
+| 4 | 相关工作 | 工作进展详情 II — 第二项工作或补充细节 |
+| 5 | 模板架构设计 | **遇到的问题与讨论** — alertblock 突出障碍 |
+| 6 | 技术选型表 | **下周工作计划** — enumerate 清晰列出 |
+| 7 | 编译性能测试 | **致谢 & Q&A** — 大号居中文字 |
+| 8 | 实验结果可视化 | — |
+| 9 | 主要贡献 | — |
+| 10 | 未来工作 | — |
+| 11 | 致谢 | — |
+| 12 | 参考文献 | — |
+
+- [x] 组会模板特点：
+  - **无 `\section` 目录结构**：组会内容短，不需要 `\tableofcontents`，直接 itemize 罗列工作项
+  - **无参考文献页**：日常组会通常不列出正式引用（除非汇报文献阅读）
+  - **突出问题讨论**：用 `alertblock` 高亮遇到的困难，引导导师和同门给出建议
+  - **强调下周计划**：组会的核心产出之一是明确下一步做什么
+  - **可含文献阅读帧**（可选）：用 block/exampleblock 展示读过的论文要点
+
+- [x] 确认 `beamer-style.sty` 引用路径正确：`\usepackage{beamer-style}`（与 `main.tex` 一致，同目录）。
+- [x] 确认元数据区格式与 `main.tex` 一致（`\title`、`\author`、`\institute`、`\date`），注释风格统一。
+- [x] Verification：结构设计覆盖组会核心场景，帧数精简（6-7 帧 vs 答辩的 12 帧），结构文档化。
+
+### Milestone 3: End-to-End Feature Workflow ✅
+
+- [x] 编写 `main-groupmeeting.tex` 完整内容（183 行），包含 7 帧幻灯片 + 2 个可选帧（文献阅读、参考文献）：
+  1. 标题页（`[shrink]` + 导师信息）
+  2. 本周工作概览（itemize + block 总体进度）
+  3. 工作进展详情 — 数据预处理（enumerate + exampleblock）
+  4. 工作进展详情 — 基线模型实验（columns 双栏 + itemize）
+  5. 遇到的问题与讨论（2 个 alertblock，突出问题）
+  6. 下周工作计划（enumerate + 子 itemize + block 目标）
+  7. 致谢 & Q&A（居中大号文字）
+  
+  可选帧（已注释，按需取消注释）：
+  - 文献阅读笔记（双 block 对比两篇论文）
+  - 参考文献页（`\printbibliography`）
+- [x] 全部帧附带详细 LaTeX 注释，标注用户可修改点，风格与 `main.tex` 一致。
+- [x] 编译成功：
+  ```bash
+  latexmk -jobname=main-groupmeeting main-groupmeeting.tex
+  ```
+- [x] Verification：
+  - 7 页 PDF，68,009 字节 ✅
+  - 0 错误，0 Overfull 警告 ✅
+  - 中文字符无缺失（PingFang SC 正常渲染）✅
+  - 所有 slide 类型正常显示（标题页、概览、详情 ×2、问题讨论、下周计划、致谢）✅
+
+### Milestone 4: Regression Check and Demo ✅
+
+- [x] 回归验证 `main.tex`：删除 PDF → `latexmk` 重新编译 → 17 页 PDF，123,522 字节。0 错误，0 Overfull 警告。与基线完全一致。
+- [x] 从零编译两个模板，均一次通过：
+  - `main.tex` → 17 页 ✅
+  - `main-groupmeeting.tex` → 7 页 ✅
+- [x] README 更新：
+  - 新增「预设场景」小节，对比表格展示两种模板的适用场景、文件对应、典型结构
+  - 快速开始区分答辩和组会两种编译命令
+  - 自定义指南补充组会模板的元数据修改说明
+  - 文件说明表增加 `main-groupmeeting.tex` 条目
+  - 项目结构树增加 `main-groupmeeting.tex`
+  - FAQ 新增：模板选择建议、组会模板编译方法
+- [x] `.gitignore` 检查：`*.pdf` 规则已覆盖 `main-groupmeeting.pdf`，无需修改。
+- [x] 已知限制更新：`decisions.md` 中「单主题」→「单主题配色」，新增「预设场景有限（当前 2 种）」。
+- [x] 文档验证：`validate_mvp_docs.py` 通过。
+
+### Later
+
+- 提供「技术分享」预设场景（`main-techshare.tex`）
+- 提供简洁的 Makefile 或 `select-template.sh`，交互式选择预设场景
+- 当场景数量 ≥ 4 时，将共同结构提炼为 `beamer-common.tex` 或 `\newcommand` 宏集
+- 考虑在 `latexmkrc` 中添加 `@default_files` 多文件支持
+<!-- feature:groupmeeting-preset:end -->

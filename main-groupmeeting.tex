@@ -1,0 +1,207 @@
+% ============================================================
+%  main-groupmeeting.tex — 组会汇报 Beamer 演示文稿模板
+%  ============================================================
+%  使用方式：
+%    1. 修改下方「元数据」区的标题、汇报人、导师等信息
+%    2. 在各帧中替换示例内容为你的本周工作
+%    3. 将图片放入 img/ 目录，用 \includegraphics{img/xxx.png} 引用
+%    4. 终端运行以下命令编译：
+%       latexmk -jobname=main-groupmeeting main-groupmeeting.tex
+%    5. 查看生成的 main-groupmeeting.pdf
+%  ============================================================
+
+\documentclass[aspectratio=169]{beamer}
+
+% ---------- Style ----------
+\usepackage{beamer-style}
+
+% ============================================================
+%  元数据 — 修改为你自己的信息
+% ============================================================
+\title{本周研究进展汇报}
+\subtitle{课题组组会}
+\author{张\textbf{三}}
+\institute{某某大学 ~ 计算机科学与技术学院 ~ 某某课题组}
+\date{2026 年 6 月 19 日}
+
+\begin{document}
+
+% ============================================================
+%  1. 标题页 (Title Page)
+% ============================================================
+
+\begin{frame}[shrink]
+  \titlepage
+
+  \vspace{-1.5em}
+  \begin{center}
+    \footnotesize
+    \textbf{指导教师：}李四 ~ 教授
+  \end{center}
+\end{frame}
+
+% ============================================================
+%  2. 本周工作概览 (Weekly Overview)
+% ============================================================
+
+\begin{frame}{本周工作概览}
+  \begin{itemize}
+    \item \textbf{工作一：}完成了实验数据采集与预处理，共收集 500 条样本。
+    \item \textbf{工作二：}实现了基线模型并完成初步训练，准确率达到 85.3\%。
+    \item \textbf{工作三：}阅读了 2 篇相关论文，整理了方法对比笔记。
+  \end{itemize}
+
+  \vspace{1em}
+  \begin{block}{总体进度}
+    按计划推进，实验部分比预期提前 1 天完成。
+  \end{block}
+\end{frame}
+
+% ============================================================
+%  3. 工作进展详情 (Detailed Progress)
+%     可按需增减帧数，每帧展开一项工作
+% ============================================================
+
+\begin{frame}{工作进展详情 — 数据预处理}
+  \begin{itemize}
+    \item 数据来源：公开数据集 + 自建标注数据（共 500 条）。
+    \item 预处理步骤：
+      \begin{enumerate}
+        \item 文本清洗（去除噪声、统一编码为 UTF-8）。
+        \item 分词与词性标注（使用 jieba 分词器）。
+        \item 构建词表并过滤低频词（频次 < 3 的词语被替换为 \texttt{<UNK>}）。
+      \end{enumerate}
+    \item 最终构建了包含 12,000 个词语的词表。
+  \end{itemize}
+
+  \begin{exampleblock}{经验记录}
+    jieba 分词在中文科技文本上效果良好，但部分专业术语需要手动添加自定义词典。
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{工作进展详情 — 基线模型实验}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{实验设置}
+      \begin{itemize}
+        \item 模型：BERT-base-Chinese
+        \item 训练集：400 条
+        \item 验证集：50 条
+        \item 测试集：50 条
+        \item Epochs：10
+        \item Batch size：16
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{实验结果}
+      \begin{itemize}
+        \item 验证集准确率：\textbf{85.3\%}
+        \item 测试集准确率：\textbf{84.1\%}
+        \item 训练耗时：约 12 分钟 (GPU)
+      \end{itemize}
+
+      \vspace{1em}
+      % 如果你的实验有图表，替换为实际图片：
+      % \includegraphics[width=\columnwidth]{img/your-result.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+%  4. 文献阅读（可选帧）
+%     如果本周读了论文，取消注释使用此帧
+% ============================================================
+
+% \begin{frame}{文献阅读笔记}
+%   \begin{block}{论文标题一 [arXiv 2026]}
+%     \begin{itemize}
+%       \item 核心方法：提出了一种基于注意力机制的改进方案。
+%       \item 关键结论：在 X 数据集上提升了 3.2 个百分点的准确率。
+%       \item 与本文关系：可以尝试将其方法迁移到我们的任务中。
+%     \end{itemize}
+%   \end{block}
+%
+%   \vspace{0.5em}
+%   \begin{block}{论文标题二 [ACL 2025]}
+%     \begin{itemize}
+%       \item 核心方法：使用对比学习增强文本表示。
+%       \item 关键结论：在小样本场景下效果显著。
+%       \item 与本文关系：我们的数据量有限，可参考其小样本策略。
+%     \end{itemize}
+%   \end{block}
+% \end{frame}
+
+% ============================================================
+%  5. 遇到的问题与讨论 (Problems & Discussion)
+%     组会的核心环节：把困难说出来，获得导师和同门的建议
+% ============================================================
+
+\begin{frame}{遇到的问题与讨论}
+  \begin{alertblock}{问题一：模型在小样本类别上效果差}
+    \begin{itemize}
+      \item 现象：测试集中样本数 < 10 的类别，F1 值仅 0.42。
+      \item 已尝试：数据增强（回译、同义词替换）→ 提升不明显。
+      \item 待讨论：是否可以合并低频类别？或引入外部知识图谱？
+    \end{itemize}
+  \end{alertblock}
+
+  \vspace{0.5em}
+  \begin{alertblock}{问题二：训练时间超出预期}
+    \begin{itemize}
+      \item 现象：全量数据训练一次约需 45 分钟（CPU），GPU 资源紧张。
+      \item 已尝试：减小 batch size → 收敛变慢。
+      \item 待讨论：是否可以使用混合精度训练？或有其他 GPU 资源可用？
+    \end{itemize}
+  \end{alertblock}
+\end{frame}
+
+% ============================================================
+%  6. 下周工作计划 (Next Week Plan)
+% ============================================================
+
+\begin{frame}{下周工作计划}
+  \begin{enumerate}
+    \item \textbf{模型改进}（预计 3 天）
+      \begin{itemize}
+        \item 调研注意力机制变体方案。
+        \item 实现 2 种改进模型并对比效果。
+      \end{itemize}
+    \item \textbf{实验补充}（预计 2 天）
+      \begin{itemize}
+        \item 补充消融实验（验证各模块的贡献）。
+        \item 整理实验数据表格和图表。
+      \end{itemize}
+    \item \textbf{论文撰写}（预计 2 天）
+      \begin{itemize}
+        \item 更新 Related Work 部分（新增 2 篇引用）。
+        \item 完成实验分析部分的初稿。
+      \end{itemize}
+  \end{enumerate}
+
+  \vspace{0.5em}
+  \begin{block}{目标}
+    下周末前完成改进模型的初步实验，并提交实验分析草稿给导师审阅。
+  \end{block}
+\end{frame}
+
+% ============================================================
+%  7. 致谢 & 讨论 (Thank You & Q&A)
+% ============================================================
+
+\begin{frame}[c]{}
+  \centering
+  \Huge 谢谢！\\[0.5em]
+  \Large 请各位老师和同学批评指正
+\end{frame}
+
+% ============================================================
+%  附录：如需要列出参考文献，取消注释以下帧
+%     参考文献条目放在 refs.bib 中
+% ============================================================
+
+% \begin{frame}[allowframebreaks]{参考文献}
+%   \nocite{*}
+%   \printbibliography
+% \end{frame}
+
+\end{document}

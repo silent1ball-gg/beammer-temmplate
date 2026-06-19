@@ -8,8 +8,8 @@
 - ✅ 开箱即用，`latexmk` 一键编译
 - ✅ 样式与内容分离（`.sty` + `.tex`）
 - ✅ 中文完美支持（PingFang SC / 苹方-简）
-- ✅ 学术答辩预设结构（标题 → 目录 → 背景 → 方法 → 结果 → 总结 → 参考文献）
-- ✅ 5 种常用 slide 类型：标题页、目录、正文、图表、参考文献
+- ✅ **两种预设场景**：学术答辩 + 组会汇报，按需选用
+- ✅ 6+ 种常用 slide 类型：标题页、目录、正文、图表、问题讨论、参考文献
 - ✅ 16:9 宽屏比例，适配现代投影仪
 - ✅ biber + biblatex 参考文献管理
 
@@ -24,7 +24,42 @@
 
 > **⚠️ 仅支持 XeLaTeX 编译。** pdfLaTeX 和 LuaLaTeX 未经测试，可能无法正确处理中文。
 
+## 预设场景
+
+本项目提供 **两种预设场景**，根据你的实际需求选择对应的模板文件：
+
+| 场景 | 模板文件 | 适用场合 | 典型结构 |
+|------|----------|----------|----------|
+| **学术答辩** | `main.tex` | 学位论文答辩、开题报告、中期检查 | 标题 → 目录 → 研究背景 → 相关工作 → 研究方法 → 实验结果 → 总结展望 → 致谢 → 参考文献 |
+| **组会汇报** | `main-groupmeeting.tex` | 每周/双周课题组进展汇报 | 标题 → 本周概览 → 进展详情 → 问题讨论 → 下周计划 → 致谢 |
+
+> 💡 **选择建议**：正式答辩用 `main.tex`（约 12-17 页），日常组会用 `main-groupmeeting.tex`（约 7 页）。两个模板共享同一个 `beamer-style.sty` 样式文件，视觉风格完全一致。
+
 ## 快速开始
+
+### 学术答辩模板
+
+```bash
+cd beamer-template
+
+# 编译 PDF
+latexmk
+
+# 查看生成的 main.pdf
+open main.pdf
+```
+
+### 组会汇报模板
+
+```bash
+cd beamer-template
+
+# 编译 PDF（注意：使用 -jobname 指定输出文件名）
+latexmk -jobname=main-groupmeeting main-groupmeeting.tex
+
+# 查看生成的 main-groupmeeting.pdf
+open main-groupmeeting.pdf
+```
 
 ```bash
 # 1. 克隆或复制本项目
@@ -80,7 +115,9 @@ code beamer-template
 
 ### 修改内容
 
-编辑 `main.tex`：
+编辑对应的模板文件（`main.tex` 或 `main-groupmeeting.tex`）：
+
+**学术答辩模板** (`main.tex`)：
 
 ```latex
 % --- 元数据 ---
@@ -92,6 +129,19 @@ code beamer-template
 ```
 
 在 `\begin{document} ... \end{document}` 之间按 Section 组织幻灯片内容。
+
+**组会汇报模板** (`main-groupmeeting.tex`)：
+
+```latex
+% --- 元数据 ---
+\title{本周研究进展汇报}
+\subtitle{课题组组会}
+\author{你的姓名}
+\institute{你的学校 ~ 学院 ~ 课题组}
+\date{2026 年 6 月 20 日}
+```
+
+组会模板无 Section 结构，直接按帧（frame）填写：本周概览 → 进展详情 → 问题讨论 → 下周计划。文献阅读帧和参考文献帧默认注释，按需取消注释。
 
 ### 修改样式
 
@@ -129,13 +179,14 @@ code beamer-template
 
 | 文件 | 作用 |
 |------|------|
-| `main.tex` | 主文件，填写演示内容（元数据 + 各 Section 幻灯片） |
-| `beamer-style.sty` | 样式配置（主题、颜色、字体、页脚、参考文献设置） |
+| `main.tex` | 学术答辩模板，填写演示内容（元数据 + 各 Section 幻灯片） |
+| `main-groupmeeting.tex` | **组会汇报模板**，填写本周进展（概览 → 详情 → 问题 → 计划） |
+| `beamer-style.sty` | 样式配置（主题、颜色、字体、页脚、参考文献设置），两种场景共享 |
 | `refs.bib` | BibTeX 参考文献数据库 |
 | `latexmkrc` | latexmk 编译配置（xelatex 引擎 + `build/` 中间产物目录） |
 | `build/` | 编译中间产物目录（自动生成，已 git-ignore） |
 | `img/` | 图片资源目录 |
-| `main.pdf` | 编译生成的 PDF 输出（`.gitignore` 已忽略） |
+| `main.pdf` / `main-groupmeeting.pdf` | 编译生成的 PDF 输出（`.gitignore` 已忽略） |
 
 ## 常见问题
 
@@ -152,7 +203,16 @@ code beamer-template
 **A:** 这是一个已知限制（见 [decisions.md](docs/decisions.md)）。macOS 的 XeTeX 无法通过字体名找到 TeX Live 中的 Fira Sans，会自动回退到 Latin Modern Sans。如需修复，可在 `beamer-style.sty` 中用文件路径方式显式指定 Fira 字体。
 
 ### Q: 如何更改屏幕比例为 4:3？
-**A:** 编辑 `main.tex` 第一行，将 `aspectratio=169` 改为 `aspectratio=43`。
+**A:** 编辑对应 `.tex` 文件第一行，将 `aspectratio=169` 改为 `aspectratio=43`。
+
+### Q: 学术答辩和组会汇报应该选哪个模板？
+**A:** 
+- **学术答辩** (`main.tex`)：适用于学位论文答辩、开题报告、中期检查等正式场合，结构完整（12-17 页），包含研究背景、相关工作、方法、实验结果、参考文献等章节。
+- **组会汇报** (`main-groupmeeting.tex`)：适用于每周/双周课题组进展汇报，结构精简（约 7 页），聚焦本周工作、遇到的问题和下周计划。
+- 两个模板共享同一个样式文件，视觉风格一致。选择对应场景的模板后，修改元数据和内容即可。
+
+### Q: 如何编译组会汇报模板？
+**A:** 使用 `latexmk -jobname=main-groupmeeting main-groupmeeting.tex` 命令。`-jobname` 参数确保 PDF 输出为 `main-groupmeeting.pdf` 而非 `main.pdf`，避免覆盖答辩模板的输出。如果使用 VS Code + LaTeX Workshop，打开 `main-groupmeeting.tex` 后保存即可自动编译。
 
 ### Q: 如何禁用参考文献？
 **A:** 如果不需要参考文献，可删除 `main.tex` 最后的 `\section*{参考文献}` 帧，并在 `beamer-style.sty` 中注释掉 `\usepackage[...]{biblatex}` 相关行。
@@ -161,18 +221,19 @@ code beamer-template
 
 ```text
 beamer-template/
-├── README.md              ← 你正在看
-├── main.tex               ← 主文件，编辑内容
-├── beamer-style.sty       ← 样式文件，编辑外观
-├── refs.bib               ← 参考文献
-├── latexmkrc              ← 编译配置
+├── README.md                  ← 你正在看
+├── main.tex                   ← 学术答辩模板
+├── main-groupmeeting.tex      ← 组会汇报模板
+├── beamer-style.sty           ← 样式文件，编辑外观
+├── refs.bib                   ← 参考文献
+├── latexmkrc                  ← 编译配置
 ├── .gitignore
-├── .vscode/               ← VS Code + LaTeX Workshop 配置
-├── build/                 ← 编译中间产物（自动生成）
-├── img/                   ← 图片资源
-├── docs/                  ← 项目规划文档
-├── Archive/               ← 历史归档
-└── experiments/           ← 实验性功能
+├── .vscode/                   ← VS Code + LaTeX Workshop 配置
+├── build/                     ← 编译中间产物（自动生成）
+├── img/                       ← 图片资源
+├── docs/                      ← 项目规划文档
+├── Archive/                   ← 历史归档
+└── experiments/               ← 实验性功能
 ```
 
 ## 许可
