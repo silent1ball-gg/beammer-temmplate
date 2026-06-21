@@ -1,0 +1,24 @@
+\documentclass[aspectratio=169]{beamer}
+% --- 不用 metropolis，用 Madrid ---
+\usetheme{Madrid}
+
+\setbeamertemplate{footline}{%
+  \hfill%
+  \usebeamercolor[fg]{page number in head/foot}%
+  \usebeamerfont{page number in head/foot}%
+  \typeout{=== FOOTLINE: frame=\insertframenumber}%
+  FRAME:\insertframenumber
+  \hspace{1.5em}\vspace{4pt}%
+}
+
+\begin{document}
+
+\begin{frame}{Main 1} Frame 1 \end{frame}
+\begin{frame}{Main 2} Frame 2 \end{frame}
+
+\appendix
+
+\begin{frame}{Appendix A} Appendix frame. \end{frame}
+\begin{frame}{Appendix B} Second appendix. \end{frame}
+
+\end{document}

@@ -1,0 +1,47 @@
+% ============================================================
+%  Minimal test case for appendix page-number bug
+%  目标：隔离 footline 在 appendix 中的行为
+% ============================================================
+
+\documentclass[aspectratio=169]{beamer}
+\usetheme{metropolis}
+
+% --- 复制当前 beamer-style.sty 的 footline ---
+\makeatletter
+\setbeamertemplate{footline}{%
+  \hfill%
+  \usebeamercolor[fg]{page number in head/foot}%
+  \usebeamerfont{page number in head/foot}%
+  \ifbeamer@inappendix
+    A-\insertframenumberinappendix
+  \else
+    \insertframenumber\,/\,\insertmainframenumber
+  \fi
+  \hspace{1.5em}\vspace{4pt}%
+}
+\makeatother
+
+\begin{document}
+
+% --- 2 个正文帧 ---
+\begin{frame}{Main 1}
+  Frame 1
+\end{frame}
+
+\begin{frame}{Main 2}
+  Frame 2
+\end{frame}
+
+% --- 进入附录 ---
+\appendix
+\section{Appendix}
+
+\begin{frame}{Appendix A}
+  This is the appendix.
+\end{frame}
+
+\begin{frame}{Appendix B}
+  Second appendix frame.
+\end{frame}
+
+\end{document}

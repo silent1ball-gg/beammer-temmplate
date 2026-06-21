@@ -1,0 +1,24 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{metropolis}
+
+% --- 最简单的 footline：只显示帧号 ---
+\setbeamertemplate{footline}{%
+  \hfill%
+  \usebeamercolor[fg]{page number in head/foot}%
+  \usebeamerfont{page number in head/foot}%
+  \typeout{=== FOOTLINE: frame=\insertframenumber}%
+  FRAME:\insertframenumber
+  \hspace{1.5em}\vspace{4pt}%
+}
+
+\begin{document}
+
+\begin{frame}{Main 1} Frame 1 \end{frame}
+\begin{frame}{Main 2} Frame 2 \end{frame}
+
+\appendix
+
+\begin{frame}{Appendix A} This is the appendix. \end{frame}
+\begin{frame}{Appendix B} Second appendix frame. \end{frame}
+
+\end{document}

@@ -1,0 +1,31 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{metropolis}
+
+% --- 模拟 beamer-style.sty 的修复 ---
+\expandafter\def\csname beamer@@tmpop@frame numbering@counter\endcsname{%
+  \insertframenumber\,/\,\insertmainframenumber
+}
+\expandafter\def\csname beamer@@tmpop@frame numbering@none\endcsname{%
+  \typeout{=== FOOTLINE APPENDIX: frame=\insertframenumber, offset=\insertframenumberinappendix}%
+  \ifbeamer@inappendix
+    A-\insertframenumberinappendix
+  \fi
+}
+
+\makeatletter
+% 验证 footline plain 模板确实被调用
+\addtobeamertemplate{footline}{}{\typeout{=== FOOTLINE CALLED: frame=\insertframenumber}}
+\makeatother
+
+\begin{document}
+
+\begin{frame}{Main 1} Frame 1 \end{frame}
+\begin{frame}{Main 2} Frame 2 \end{frame}
+
+\appendix
+\section{Appendix}
+
+\begin{frame}{Appendix A} Appendix frame A \end{frame}
+\begin{frame}{Appendix B} Appendix frame B \end{frame}
+
+\end{document}

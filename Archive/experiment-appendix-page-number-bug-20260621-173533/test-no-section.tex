@@ -1,0 +1,30 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{metropolis}
+
+\makeatletter
+\setbeamertemplate{footline}{%
+  \hfill%
+  \usebeamercolor[fg]{page number in head/foot}%
+  \usebeamerfont{page number in head/foot}%
+  \typeout{=== FOOTLINE DEBUG: frame=\insertframenumber, inappendix=\ifbeamer@inappendix YES\else NO\fi}%
+  \ifbeamer@inappendix
+    A-\insertframenumberinappendix
+  \else
+    \insertframenumber\,/\,\insertmainframenumber
+  \fi
+  \hspace{1.5em}\vspace{4pt}%
+}
+\makeatother
+
+\begin{document}
+
+\begin{frame}{Main 1} Frame 1 \end{frame}
+\begin{frame}{Main 2} Frame 2 \end{frame}
+
+% --- 不用 \section，直接 \appendix ---
+\appendix
+
+\begin{frame}{Appendix A} This is the appendix. \end{frame}
+\begin{frame}{Appendix B} Second appendix frame. \end{frame}
+
+\end{document}

@@ -1,0 +1,51 @@
+% ============================================================
+%  Diagnostic test: 输出 footline 中各宏的实际值
+% ============================================================
+
+\documentclass[aspectratio=169]{beamer}
+\usetheme{metropolis}
+
+\makeatletter
+\setbeamertemplate{footline}{%
+  \hfill%
+  \usebeamercolor[fg]{page number in head/foot}%
+  \usebeamerfont{page number in head/foot}%
+  % --- 诊断输出到 .log 文件 ---
+  \typeout{=== FOOTLINE DEBUG ===}%
+  \typeout{  framenumber       = \insertframenumber}%
+  \typeout{  mainframenumber   = \insertmainframenumber}%
+  \typeout{  totalframenumber  = \inserttotalframenumber}%
+  \typeout{  inappendix?       = \ifbeamer@inappendix YES\else NO\fi}%
+  \typeout{  framenumberinappendix = \insertframenumberinappendix}%
+  % --- 实际显示 ---
+  \ifbeamer@inappendix
+    A-\insertframenumberinappendix
+  \else
+    \insertframenumber\,/\,\insertmainframenumber
+  \fi
+  \hspace{1.5em}\vspace{4pt}%
+}
+\makeatother
+
+\begin{document}
+
+\begin{frame}{Main 1}
+  Frame 1
+\end{frame}
+
+\begin{frame}{Main 2}
+  Frame 2
+\end{frame}
+
+\appendix
+\section{Appendix}
+
+\begin{frame}{Appendix A}
+  This is the appendix.
+\end{frame}
+
+\begin{frame}{Appendix B}
+  Second appendix frame.
+\end{frame}
+
+\end{document}

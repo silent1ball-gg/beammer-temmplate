@@ -61,11 +61,27 @@
 \setbeamercolor{frametitle}{fg=white, bg=DarkText}
 
 % ---------- Footer: Page Numbers ----------
+% metropolis (via \apptocmd{\appendix}) sets numbering=none and
+% progressbar=none in the appendix, which blanks the frame number.
+% We counteract this by redefining the pgfkey handlers that metropolis
+% uses — the "none" codes become no-ops, so our footline survives.
+\pgfkeys{
+  /metropolis/outer/numbering/none/.code={},
+  /metropolis/outer/progressbar/none/.code={},
+}
+
+% Our custom footline — works in both main body and appendix because
+% we've neutralised the metropolis hooks that would override it.
 \setbeamertemplate{footline}{%
   \hfill%
   \usebeamercolor[fg]{page number in head/foot}%
   \usebeamerfont{page number in head/foot}%
-  \insertframenumber\,/\,\inserttotalframenumber\hspace{1.5em}\vspace{4pt}%
+  \ifbeamer@inappendix
+    A-\insertframenumberinappendix
+  \else
+    \insertframenumber\,/\,\insertmainframenumber
+  \fi
+  \hspace{1.5em}\vspace{4pt}%
 }
 
 % ---------- Misc Templates ----------
