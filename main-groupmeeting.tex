@@ -31,6 +31,13 @@
 % ============================================================
 
 \begin{frame}[shrink]
+  % --- 封面 Logo（右上角）---
+  % 替换 img/logo.png 为你自己的 Logo 文件
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[anchor=north east, xshift=3.5cm, yshift=10cm]
+      at (current page.north east)
+      {\includegraphics[height=1.6cm]{img/logo.png}};
+  \end{tikzpicture}
   \titlepage
 
   \vspace{-1.5em}
@@ -41,7 +48,29 @@
 \end{frame}
 
 % ============================================================
-%  2. 本周工作概览 (Weekly Overview)
+%  2. 问题背景 (Problem Background)
+%     帮助听众快速理解你的研究课题
+% ============================================================
+
+\begin{frame}{问题背景}
+  \begin{block}{研究课题}
+    基于深度学习的短文本分类方法研究
+  \end{block}
+
+  \begin{itemize}
+    \item \textbf{核心问题：}短文本信息稀疏、噪声大，现有方法难以充分捕捉语义信息。
+    \item \textbf{应用场景：}新闻标题分类、社交媒体情感分析、客服对话意图识别。
+    \item \textbf{当前瓶颈：}
+      \begin{itemize}
+        \item 传统词袋模型丢失词序和上下文信息。
+        \item 预训练模型（如 BERT）在短文本上微调效果不稳定。
+      \end{itemize}
+    \item \textbf{本文思路：}结合外部知识图谱增强短文本的语义表示，提高分类鲁棒性。
+  \end{itemize}
+\end{frame}
+
+% ============================================================
+%  3. 本周工作概览 (Weekly Overview)
 % ============================================================
 
 \begin{frame}{本周工作概览}
@@ -58,7 +87,7 @@
 \end{frame}
 
 % ============================================================
-%  3. 工作进展详情 (Detailed Progress)
+%  4. 工作进展详情 (Detailed Progress)
 %     可按需增减帧数，每帧展开一项工作
 % ============================================================
 
@@ -108,7 +137,52 @@
 \end{frame}
 
 % ============================================================
-%  4. 文献阅读（可选帧）
+%  5. 结果展示 (Results)
+%     用图表、表格等形式展示本周工作的核心产出
+% ============================================================
+
+\begin{frame}{结果展示}
+  \begin{figure}
+    \centering
+    % 占位图：替换为你的实验结果图，例如：
+    % \includegraphics[width=0.75\textwidth]{img/your-result.png}
+    \includegraphics[width=0.6\textwidth]{example-image}
+    \caption{实验结果对比图（请替换为实际数据图表）}
+    \label{fig:groupmeeting-result}
+  \end{figure}
+
+  \vspace{-0.5em}
+  \begin{itemize}
+    \footnotesize
+    \item 更多图片示例：\texttt{example-image-a}, \texttt{example-image-golden}
+    \item 推荐使用 PDF/PNG 格式矢量图，缩放不失真
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{结果分析}
+  \begin{table}
+    \centering
+    \begin{tabular}{lccc}
+      \toprule
+      \textbf{方法} & \textbf{准确率 (\%)} & \textbf{F1 值} & \textbf{训练时间 (min)} \\
+      \midrule
+      基线模型 (BERT)    & 84.1 & 0.83 & 12 \\
+      改进方案 A        & 87.3 & 0.86 & 15 \\
+      改进方案 B        & 86.5 & 0.85 & 10 \\
+      \bottomrule
+    \end{tabular}
+    \caption{各方法性能对比（请替换为你的实际数据）}
+    \label{tab:result-compare}
+  \end{table}
+
+  \begin{itemize}
+    \item 改进方案 A 准确率最高，但训练时间略长。
+    \item 改进方案 B 在效率与效果之间取得较好平衡。
+  \end{itemize}
+\end{frame}
+
+% ============================================================
+%  6. 文献阅读（可选帧）
 %     如果本周读了论文，取消注释使用此帧
 % ============================================================
 
@@ -132,7 +206,7 @@
 % \end{frame}
 
 % ============================================================
-%  5. 遇到的问题与讨论 (Problems & Discussion)
+%  7. 遇到的问题与讨论 (Problems & Discussion)
 %     组会的核心环节：把困难说出来，获得导师和同门的建议
 % ============================================================
 
@@ -156,7 +230,7 @@
 \end{frame}
 
 % ============================================================
-%  6. 下周工作计划 (Next Week Plan)
+%  8. 下周工作计划 (Next Week Plan)
 % ============================================================
 
 \begin{frame}{下周工作计划}
@@ -185,7 +259,7 @@
 \end{frame}
 
 % ============================================================
-%  7. 致谢 & 讨论 (Thank You & Q&A)
+%  9. 致谢 & 讨论 (Thank You & Q&A)
 % ============================================================
 
 \begin{frame}[c]{}
@@ -195,7 +269,7 @@
 \end{frame}
 
 % ============================================================
-%  8. 附录 (Appendix)
+%  10. 附录 (Appendix)
 %     附录帧页码自动显示为 A-1, A-2, ...，
 %     适合放置备份材料供讨论环节按需展示。
 %     删除或替换为你的实际附录内容。

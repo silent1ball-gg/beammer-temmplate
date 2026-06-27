@@ -97,7 +97,7 @@ beamer-template/
 
 ### Path Responsibilities
 
-- `main-groupmeeting.tex`：组会汇报预设场景的主文件。与 `main.tex` 完全对等的关系——两个独立的内容模板，共享同一个 `beamer-style.sty` 样式。提供组会专用幻灯片结构：标题页（含导师/课题组信息）、本周工作概览、详细进展、问题讨论（alertblock/exampleblock）、下周计划、致谢 & Q&A。文件内附详细的 LaTeX 注释，标注用户可修改的元数据和内容区域。
+- `main-groupmeeting.tex`：组会汇报预设场景的主文件。与 `main.tex` 完全对等的关系——两个独立的内容模板，共享同一个 `beamer-style.sty` 样式。提供组会专用幻灯片结构：标题页（含 Logo + 导师/课题组信息）→ 问题背景 → 本周工作概览 → 详细进展（数据预处理 + 基线实验）→ 结果展示（图表 + 分析表格）→ 问题讨论（alertblock/exampleblock）→ 下周计划 → 致谢 & Q&A → 附录。文件内附详细的 LaTeX 注释，标注用户可修改的元数据和内容区域。
 - `README.md`：新增「预设场景」小节，用对比表格展示两种模板的适用场景、幻灯片结构差异、选择建议。更新文件说明表增加 `main-groupmeeting.tex` 条目。
 <!-- feature:groupmeeting-preset:end -->
 
@@ -130,3 +130,53 @@ beamer-template/
 - `main-groupmeeting.tex` 新增：`\appendix` + 一个示例附录帧，位于致谢之后、`\end{document}` 之前。原注释的参考文献帧保留在附录帧之后。
 - `README.md`：特性列表新增附录条目；自定义指南新增「使用附录」小节；FAQ 新增附录页码问答。
 <!-- feature:appendix-pages:end -->
+
+<!-- feature:cover-logo:start -->
+## Feature Structure Update: cover-logo
+
+### Current Structure Impact
+
+- 修改 `main.tex`：标题帧 `\begin{frame}` 后新增 tikz logo 代码块（6 行）。
+- 修改 `main-groupmeeting.tex`：同上。
+- 不修改 `beamer-style.sty`、`latexmkrc`、`refs.bib`。
+
+### Proposed Changes
+
+```text
+beamer-template/
+├── main.tex                   ← MODIFIED: 标题帧新增右上角 Logo
+├── main-groupmeeting.tex      ← MODIFIED: 标题帧新增右上角 Logo
+├── img/logo.png               ← NEW: 用户提供的 Logo 文件
+...
+```
+
+### Path Responsibilities
+
+- `main.tex` / `main-groupmeeting.tex`：标题帧内通过 `tikz` 的 `remember picture, overlay` 将 `img/logo.png` 定位在封面右上角。用户修改 `xshift`/`yshift` 调整位置，修改 `height` 调整大小。
+- `img/logo.png`：用户自行放置的 Logo 图片文件。
+<!-- feature:cover-logo:end -->
+
+<!-- feature:groupmeeting-enhance:start -->
+## Feature Structure Update: groupmeeting-enhance
+
+### Current Structure Impact
+
+- 修改 `main-groupmeeting.tex`：新增 3 帧（问题背景 + 结果展示 + 结果分析），约 50 行。更新全部 section 编号注释。
+- 不修改其他文件。
+
+### Proposed Changes
+
+```text
+beamer-template/
+├── main-groupmeeting.tex      ← MODIFIED: 新增 问题背景、结果展示、结果分析 帧
+...
+```
+
+### Path Responsibilities
+
+- `main-groupmeeting.tex` 新增帧：
+  - **问题背景**（Section 2）：研究课题、核心问题、应用场景、当前瓶颈、本文思路。帮助听众快速理解研究上下文。
+  - **结果展示**（Section 5）：图表占位帧（`example-image` + caption），替换为实际实验结果图。
+  - **结果分析**（Section 5）：性能对比表格（`booktabs` 三线表），含基线模型与改进方案对比示例。
+- 组会幻灯片结构更新为 10 个 section：标题页 → 问题背景 → 本周概览 → 进展详情 → 结果展示 → 文献阅读（可选）→ 问题讨论 → 下周计划 → 致谢 → 附录。
+<!-- feature:groupmeeting-enhance:end -->

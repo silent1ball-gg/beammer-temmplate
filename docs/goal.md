@@ -118,11 +118,11 @@
 
 ### Success Criteria
 
-- [ ] `main-groupmeeting.tex` 开箱可编译，`latexmk` 一次通过，生成无错误的 PDF。
-- [ ] 中文渲染正常（PingFang SC），无乱码，字体回退合理。
-- [ ] 覆盖组会汇报核心幻灯片类型：标题页、本周概览、详细进展、问题讨论、下周计划、致谢。
-- [ ] README 更新，明确说明两种预设场景的差异和选择方式。
-- [ ] 现有 `main.tex`（学术答辩模板）回归编译不受影响（仍为 17 页 PDF，0 错误）。
+- [x] `main-groupmeeting.tex` 开箱可编译，`latexmk` 一次通过，生成无错误的 PDF。✅ 12 页，0 错误
+- [x] 中文渲染正常（PingFang SC），无乱码，字体回退合理。✅
+- [x] 覆盖组会汇报核心幻灯片类型：标题页、问题背景、本周概览、详细进展、结果展示、问题讨论、下周计划、致谢、附录。✅
+- [x] README 更新，明确说明两种预设场景的差异和选择方式。✅
+- [x] 现有 `main.tex`（学术答辩模板）回归编译不受影响（仍为 19 页 PDF，0 错误）。✅
 <!-- feature:groupmeeting-preset:end -->
 
 <!-- feature:appendix-pages:start -->
@@ -155,7 +155,68 @@
 ### Success Criteria
 
 - [x] `main.tex` 编译通过，19 页（正文 17+1 标题帧 A-1+1 内容帧 A-2），0 新错误。✅
-- [x] `main-groupmeeting.tex` 编译通过，9 页（正文 7+1 标题帧 A-1+1 内容帧 A-2），0 新错误。✅
+- [x] `main-groupmeeting.tex` 编译通过，12 页（正文 10+1 标题帧 A-1+1 内容帧 A-2），0 新错误。✅
 - [x] 正文页码显示 "X/Y"，附录页码显示 "A-Z"（pgfkey 中性化 + `\ifbeamer@inappendix`）。✅
 - [x] 两份模板回归编译零 overfull 警告。✅
 <!-- feature:appendix-pages:end -->
+
+<!-- feature:cover-logo:start -->
+## Feature: cover-logo
+
+### User Request
+
+在封面右上角添加机构/课题组 Logo
+
+### Purpose Analysis
+
+- **用户真实目标**：学术答辩和组会汇报通常需要展示学校、学院或课题组的标识，这是学术演示的标配元素。
+- **属于产品而非实验**：使用 Beamer 内置 tikz（已默认加载）的 overlay 定位，零额外依赖。
+
+### Minimum Feature Scope
+
+- 在 `main.tex` 和 `main-groupmeeting.tex` 的标题帧中通过 tikz overlay 定位 Logo。
+- Logo 位置：封面右上角，通过 `xshift`/`yshift` 灵活调整。
+- Logo 文件：`img/logo.png`（用户自行替换）。
+
+### Non-Goals
+
+- 不在非封面帧显示 Logo（仅封面）。
+- 不修改 `beamer-style.sty`。
+
+### Success Criteria
+
+- [x] `main.tex` 封面 Logo 渲染正常，编译 0 错误。✅
+- [x] `main-groupmeeting.tex` 封面 Logo 渲染正常，编译 0 错误。✅
+<!-- feature:cover-logo:end -->
+
+<!-- feature:groupmeeting-enhance:start -->
+## Feature: groupmeeting-enhance
+
+### User Request
+
+组会模板增加「问题背景」和「结果展示」帧
+
+### Purpose Analysis
+
+- **用户真实目标**：
+  1. 组会听众（导师、同门）可能不熟悉每个人的课题细节，需要在汇报开头提供问题背景。
+  2. 每周工作的核心产出（实验结果、图表、数据对比）需要专门的展示区域，而非混在进展详情中一笔带过。
+- **属于产品而非实验**：直接扩展现有模板的幻灯片结构，不引入新依赖。
+
+### Minimum Feature Scope
+
+- 新增「问题背景」帧（Section 2）：研究课题、核心问题、应用场景、当前瓶颈、本文思路。
+- 新增「结果展示」帧：图表占位 + caption 说明。
+- 新增「结果分析」帧：booktabs 三线表性能对比 + 文字分析。
+
+### Non-Goals
+
+- 不修改 `beamer-style.sty`。
+- 不影响 `main.tex`。
+
+### Success Criteria
+
+- [x] `main-groupmeeting.tex` 编译通过，12 页，0 新错误。✅
+- [x] 新增 3 帧均含示例内容 + 替换说明注释。✅
+- [x] `main.tex` 回归编译不受影响（19 页）。✅
+<!-- feature:groupmeeting-enhance:end -->
