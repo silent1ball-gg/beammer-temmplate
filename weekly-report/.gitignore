@@ -1,0 +1,5 @@
+build/
+weekly-report.pdf
+generated/*.tex
+__pycache__/
+*.pyc

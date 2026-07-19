@@ -1,0 +1,108 @@
+version: 1
+
+week:
+  title: "每周工作汇报"
+  subtitle: "课题组组会"
+  author: "你的姓名"
+  institute: "你的学校 / 学院 / 课题组"
+  period: "2026.07.13 — 2026.07.19"
+  date: "2026 年 7 月 19 日"
+  conclusion: "baseline_v2 已稳定复现；下一步需要判断知识增强是否值得投入。"
+  confirmed: "三组随机种子的 Accuracy 为 85.3%，F1 波动小于 0.8%。"
+  uncertainty: "低频类别的错误主要来自数据不足还是标签边界，尚未区分。"
+  request: "讨论是否先合并低频类别，再投入知识图谱增强。"
+  logo: "img/logo.png"
+
+work_items:
+  - title: "基线模型实验"
+    type: experiment
+    focus: true
+    status: green
+    overview: "完成三组随机种子实验，F1 波动小于 0.8%。"
+    objective: "确认 baseline_v2 是否足够稳定，可作为后续方法的比较基准。"
+    change: "统一数据划分与训练配置，补跑三组随机种子。"
+    evidence:
+      summary: "Accuracy 85.3% & macro_F1 0.831；结果可复现。"
+      image: "img/logo.png"
+      caption: "图片证据示例：请替换为实际实验结果图"
+    impact: "基线方差可接受，后续提升可以归因于方法变化。"
+    blocker: ""
+    request: ""
+    next_step: "补充消融实验并固定结果表格。"
+
+  - title: "低频类别分析"
+    type: engineering
+    focus: true
+    status: yellow
+    overview: "定位到 3 个低频类别贡献了 62% 的错误。"
+    objective: "定位低频类别性能下降的主要原因。"
+    change: "增加逐类别评估脚本，并检查混淆矩阵与错误样本。"
+    evidence:
+      summary: "3 个样本量小于 10 的类别贡献了 62% 的分类错误。"
+    impact: "整体指标已被少数类别主导，需要先决定标签与数据策略。"
+    blocker: "数据增强带来的提升小于 0.5 个百分点。"
+    request: "确认优先合并标签，还是继续收集样本。"
+    next_step: "按讨论结论运行一组最小对照实验。"
+
+  - title: "相关论文阅读"
+    type: reading
+    focus: false
+    status: green
+    overview: "整理 2 篇小样本分类论文及可迁移策略。"
+    objective: "寻找低频类别处理的可复用方法。"
+    change: "完成方法、假设和适用边界的对比笔记。"
+    evidence:
+      summary: "筛选出重采样与原型学习两条候选路径。"
+    impact: "原型学习更适合当前数据规模，但实现成本较高。"
+    blocker: ""
+    request: ""
+    next_step: "先实现重采样基线，再决定是否做原型学习。"
+
+  - title: "实验章节写作"
+    type: writing
+    focus: false
+    status: green
+    overview: "完成实验设置初稿并统一指标定义。"
+    objective: "形成可审阅的实验设置章节。"
+    change: "补充数据划分、指标定义与复现实验配置。"
+    evidence:
+      summary: "完成约 1200 字初稿并提交导师审阅。"
+    impact: "暴露了随机种子与划分规则需要统一的问题。"
+    blocker: ""
+    request: ""
+    next_step: "根据反馈修订，并补充结果分析。"
+
+  - title: "数据标注协调"
+    type: coordination
+    focus: false
+    status: red
+    overview: "标注进度受阻，尚缺 80 条低频类别样本。"
+    objective: "补充低频类别的高质量标注样本。"
+    change: "完成标注规范确认，但人力尚未落实。"
+    evidence:
+      summary: "计划 150 条，目前完成 70 条。"
+    impact: "若本周无法补齐，将推迟外部知识增强实验。"
+    blocker: "缺少一名可参与交叉复核的标注人员。"
+    request: "协调一名同学参与半天交叉复核。"
+    next_step: "先完成已有样本一致性检查。"
+
+next_week:
+  - action: "完成低频类别对照实验"
+    deliverable: "合并标签与重采样两组结果"
+    evidence: "macro_F1、逐类别 F1 和混淆矩阵"
+    dependency: "组会确认标签策略"
+  - action: "补充消融实验"
+    deliverable: "一张可进入论文的结果表"
+    evidence: "三组随机种子的均值与标准差"
+    dependency: "无"
+  - action: "修订实验章节"
+    deliverable: "可审阅的第二版草稿"
+    evidence: "导师批注逐项回应"
+    dependency: "收到初稿反馈"
+
+appendix:
+  - title: "字段与证据说明"
+    bullets:
+      - "正文只保留支持结论的最小证据。"
+      - "完整表格、额外图和推导可继续添加为附录项。"
+      - "图片路径必须位于 weekly-report/img/ 中。"

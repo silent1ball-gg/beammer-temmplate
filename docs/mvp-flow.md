@@ -208,3 +208,105 @@
 
 - 提供预设的附录帧模板（数据表附录、代码附录、推导附录等）。
 <!-- feature:appendix-pages:end -->
+
+<!-- feature:multi-design-interface:start -->
+## Feature Flow: multi-design-interface
+
+### Interface Workflow ✅
+
+1. 内容模板在 `\usepackage` 中声明 `design=<name>`。
+2. `beamer-style.sty` 校验设计名并装载对应的 `beamer-design-<name>.sty`。
+3. 设计档案设置基础主题和视觉参数；公共接口层再统一加载字体、引用、表格和页码逻辑。
+4. 同一内容在不同档案下重建为相应外观。
+
+### Validation Plan
+
+- 默认 academic：回归编译两份内容模板。
+- classic、midnight：运行 `tests/design-smoke.tex`，验证主题、中文、block、附录页码能共同工作。
+- 检查未知设计名是否给出明确的可选值提示。
+<!-- feature:multi-design-interface:end -->
+
+<!-- feature:weekly-report-workflow:start -->
+## Feature Flow: weekly-report-workflow
+
+### Milestone 1: Current State and Route Fit
+
+- 已确认：项目已有 `main-groupmeeting.tex`、共用 `beamer-style.sty`、三种视觉设计和 `latexmk` 构建路径。
+- 该功能只增加内容层与使用文档；周度输入作为人类可编辑的 Markdown 接口，不引入解析器或自动化依赖。
+- Verification: 当前规划文档已归档到 `Archive/docs-before-weekly-report-workflow-*`，并在根文档中记录本功能范围。
+
+### Milestone 2: Domain or Interface Change
+
+- 定义工作项的稳定接口：目标、变化、证据、状态、影响、阻碍/请求、下一步。
+- 将工作项按实验、工程、阅读、写作、协作五类适配为重点页；共享的汇报操作保持不变：筛选重点 → 给出证据 → 明确结论 → 请求决策。
+- Verification: 输入清单和 Beamer 模板使用同一组字段，且正文骨架不依赖某一具体工作类型。
+
+### Milestone 3: End-to-End Feature Workflow
+
+- 新增独立的 `weekly-report/` 目录，其中的 `weekly-input.md` 用于日常记录和汇报前筛选。
+- 在该目录中新增 `main.tex` 与本地 `latexmkrc`；前者提供面向周报的独立可编译内容模板，后者复用项目根目录的构建配置。
+- 更新 README 和文件结构文档，说明从输入清单到 PDF 的流程与编译命令。
+- Verification: `latexmk -jobname=weekly-report main.tex` 已成功生成 10 页 PDF；检查结果为 0 个 overfull 和 0 个未定义控制序列，页面包含概览、两项重点工作、讨论、下周计划和附录。
+
+### Milestone 4: Regression Check and Demo
+
+- 从 `weekly-report/` 编译 `main.tex`，检查错误和 overfull 警告。
+- 回归编译 `main.tex` 与 `main-groupmeeting.tex`，确认公共样式和现有预设未受影响。
+- 验证四项抽象检查：输入字段是否足以支持页面选择、是否能仅由字段完成周报、结构是否在无结果周保持稳定、下周是否能回查上周承诺。
+
+**验证结果：**
+
+- `weekly-report/main.tex`、根目录 `main.tex` 与 `main-groupmeeting.tex` 均已由 latexmk 成功编译。
+- 周报 PDF 已渲染检查封面、概览、重点进展、讨论与附录页面；页码显示正文 `X / 8`、附录 `A-1`。
+- 输入清单的七字段足以确定页面内容；只有 1 个重点时可删除第二重点帧；无结果周仍可用“仍不确定 / 阻碍与请求”表达；下周计划显式要求可检查证据。
+
+### Later
+
+- 可选地增加脚本，将一份结构化 YAML/Markdown 输入生成 LaTeX 草稿。
+- 提供用于实验、代码、论文阅读的附录卡片宏。
+- 增加按周创建、归档和清理历史报告的命令行辅助工具。
+<!-- feature:weekly-report-workflow:end -->
+
+<!-- feature:weekly-report-framework:start -->
+## Feature Flow: weekly-report-framework
+
+### Milestone 1: Current State and Route Fit
+
+- 已确认现有 `weekly-report/` 仍要求用户把 `weekly-input.md` 的内容手工同步到 `main.tex`；根目录的 `latexmk`、视觉接口与周报独立目录均已稳定可用。
+- 选择本地 Python + YAML：YAML 适合高频编辑、PyYAML 已在本机可用，生成的 TeX 继续交给 XeLaTeX/latexmk，不引入第二套排版系统。
+- Verification: 当前四份根文档已归档到 `Archive/docs-before-weekly-report-framework-*`，本功能的接口和边界已记录。
+
+### Milestone 2: Domain or Interface Change
+
+- 定义 `report.yaml` 接口：`week`、`work_items`、`next_week`、`appendix`；每个工作项共享目标、变化、证据、状态、影响、阻碍/请求和下一步，另以 `type` 指定适配器。
+- 定义输入安全边界：普通文本自动 LaTeX 转义；图片必须位于 `img/`、使用 PNG/JPG/JPEG/PDF 且真实存在；重点项最多两个。
+- Verification: 用示例 YAML 覆盖实验、工程、阅读、写作和协作类型，并确保渲染器只依赖该接口。
+
+### Milestone 3: End-to-End Feature Workflow
+
+- 新增 `scripts/render_report.py`，负责加载、校验、转义和生成 TeX 片段；不直接改写 `main.tex`。
+- 将 `main.tex` 收敛为稳定外壳，并用 `\input` 加载生成的元信息与页面内容。
+- 增加 `Makefile`、`requirements.txt` 和目录级 `.gitignore`，使 `make check`、`make report` 与生成物管理可重复。
+- 更新 `README.md`、`weekly-input.md` 与示例 `report.yaml`，将手工流程切换为数据驱动流程。
+- Verification: 从 YAML 生成 TeX、编译 PDF、检查文本转义与图片校验失败路径。
+
+### Milestone 4: Regression Check and Demo
+
+- 验证 `make check` 与 `make report`；检查生成的 `.tex` 中的重点页类型、图片路径与页码。
+- 使用带 `%`、`_`、`&` 的文本和带图片的样例验证转义和图片插入；用非法图片路径验证错误信息。
+- 回归编译根目录 `main.tex`、`main-groupmeeting.tex`，确认 `bibresource` 接口与视觉档案的默认行为未改变。
+
+**验证结果：**
+
+- `make check` 通过：5 个工作项、2 个重点、1 个附录项。
+- `make test` 通过 7 项测试，覆盖特殊字符转义、五种适配器、缺失字段、重点数量、未知类型、目录逃逸、不存在图片与合法图片渲染。
+- `make report` 成功生成 10 页 `weekly-report.pdf`；日志中 0 个 overfull、0 个未定义控制序列。
+- PDF 已渲染检查封面 Logo、概览表、图片型重点页、讨论页和附录页；正文页码为 `X / 8`，附录为 `A-1`。
+- 根目录 `main.tex` 与 `main-groupmeeting.tex` 均由 latexmk 成功回归编译。
+
+### Later
+
+- 从外部任务系统、Git 提交或文献笔记预填 YAML 草稿。
+- 提供图表数据到 PDF/SVG 的自动制图适配器。
+- 增加历史周报索引和跨周进度对比。
+<!-- feature:weekly-report-framework:end -->

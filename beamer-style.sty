@@ -1,11 +1,41 @@
-% ============================================================
+﻿% ============================================================
 %  beamer-style.sty — Beamer Style Configuration
 %  ============================================================
 %  Template for academic defense / technical presentations.
-%  Font: Fira Sans (en) + PingFang SC (zh), XeLaTeX required.
+%  Font: Fira Sans (en) + platform CJK fallback, XeLaTeX required.
+%  Design interface: academic (default), classic, midnight.
 % ============================================================
 
 \ProvidesPackage{beamer-style}
+
+% ---------- Design Interface ----------
+% Keep content templates independent from the visual implementation:
+%   \usepackage[design=academic]{beamer-style}
+% Profiles choose the base Beamer theme plus its palette and chrome.  The
+% typography, bibliography, appendix numbering, and common components below
+% remain identical across profiles.
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=beamerstyle,prefix=beamerstyle@}
+\DeclareStringOption[academic]{design}
+\DeclareStringOption[refs.bib]{bibresource}
+\ProcessKeyvalOptions*
+
+\newif\ifbeamerstyle@metropolis
+\def\beamerstyle@academic{academic}
+\def\beamerstyle@classic{classic}
+\def\beamerstyle@midnight{midnight}
+
+\ifx\beamerstyle@design\beamerstyle@academic
+  \RequirePackage{beamer-design-academic}
+\else\ifx\beamerstyle@design\beamerstyle@classic
+  \RequirePackage{beamer-design-classic}
+\else\ifx\beamerstyle@design\beamerstyle@midnight
+  \RequirePackage{beamer-design-midnight}
+\else
+  \PackageError{beamer-style}{Unknown design `\beamerstyle@design'}%
+    {Choose design=academic, design=classic, or design=midnight.}%
+  \RequirePackage{beamer-design-academic}
+\fi\fi\fi
 
 % ---------- Engine Check ----------
 % This template requires XeLaTeX for Unicode + system font support.
@@ -15,63 +45,73 @@
 \RequirePackage{iftex}
 \RequireXeTeX
 
-% ---------- Beamer Theme ----------
-% metropolis: clean modern look for academic / tech presentations.
-% Loaded first — its font theme sets Fira Sans / Fira Mono for English text.
-% Other built-in alternatives: Madrid, CambridgeUS, Copenhagen, Berlin.
-
-\usetheme{metropolis}
-
 % ---------- CJK Font Setup ----------
-% Override only the CJK portion; metropolis handles English fonts.
+% Override only the CJK portion; the selected design handles English fonts.
 
 \usepackage{xeCJK}
 
-% PingFang SC ships with macOS. For cross-platform, replace with:
-%   \setCJKsansfont{Noto Sans CJK SC}
-\setCJKsansfont{PingFang SC}[
-  BoldFont   = {PingFangSC-Semibold},
-]
-
-\setCJKmonofont{PingFang SC}[
-  BoldFont   = {PingFangSC-Semibold},
-  AutoFakeSlant = 0.2,
-]
+% Prefer the native macOS font, then Windows fonts. Keep fake bold enabled for
+% Windows CJK fonts because fontspec font names vary across installations.
+\IfFontExistsTF{PingFang SC}{
+  \setCJKmainfont{PingFang SC}[
+    BoldFont = {PingFangSC-Semibold},
+  ]
+  \setCJKsansfont{PingFang SC}[
+    BoldFont = {PingFangSC-Semibold},
+  ]
+  \setCJKmonofont{PingFang SC}[
+    BoldFont = {PingFangSC-Semibold},
+    AutoFakeSlant = 0.2,
+  ]
+}{
+  \IfFontExistsTF{Microsoft YaHei}{
+    \setCJKmainfont{Microsoft YaHei}[
+      AutoFakeBold = 2.5,
+    ]
+    \setCJKsansfont{Microsoft YaHei}[
+      AutoFakeBold = 2.5,
+    ]
+    \setCJKmonofont{Microsoft YaHei}[
+      AutoFakeBold = 2.5,
+      AutoFakeSlant = 0.2,
+    ]
+  }{
+    \setCJKmainfont{SimSun}[
+      AutoFakeBold = 2.5,
+    ]
+    \setCJKsansfont{SimSun}[
+      AutoFakeBold = 2.5,
+    ]
+    \setCJKmonofont{SimSun}[
+      AutoFakeBold = 2.5,
+      AutoFakeSlant = 0.2,
+    ]
+  }
+}
 
 % ---------- Bibliography ----------
 \usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
-\addbibresource{refs.bib}
+\expandafter\addbibresource\expandafter{\beamerstyle@bibresource}
 
 % ---------- Extra Packages ----------
 \usepackage{booktabs}   % Professional tables (\toprule, \midrule, \bottomrule)
-
-% ---------- Color Palette ----------
-% Academic blue as accent — swap the hex values to change mood.
-
-\definecolor{AccentBlue}{HTML}{005A9C}    % primary accent
-\definecolor{DarkText}{HTML}{2B2B2B}      % body text
-\definecolor{LightBG}{HTML}{FAFAFA}       % page background
-
-\setbeamercolor{progress bar}{fg=AccentBlue}
-\setbeamercolor{title separator}{fg=AccentBlue}
-\setbeamercolor{structure}{fg=AccentBlue}
-\setbeamercolor{normal text}{fg=DarkText, bg=LightBG}
-\setbeamercolor{alerted text}{fg=AccentBlue}
-\setbeamercolor{example text}{fg=AccentBlue!60!black}
-\setbeamercolor{frametitle}{fg=white, bg=DarkText}
 
 % ---------- Footer: Page Numbers ----------
 % metropolis (via \apptocmd{\appendix}) sets numbering=none and
 % progressbar=none in the appendix, which blanks the frame number.
 % We counteract this by redefining the pgfkey handlers that metropolis
 % uses — the "none" codes become no-ops, so our footline survives.
-\pgfkeys{
-  /metropolis/outer/numbering/none/.code={},
-  /metropolis/outer/progressbar/none/.code={},
-}
+\ifbeamerstyle@metropolis
+  \pgfkeys{
+    /metropolis/outer/numbering/none/.code={},
+    /metropolis/outer/progressbar/none/.code={},
+  }
+\fi
 
 % Our custom footline — works in both main body and appendix because
 % we've neutralised the metropolis hooks that would override it.
+% Do not let a profile's default navigation icons compete with this footer.
+\setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{footline}{%
   \hfill%
   \usebeamercolor[fg]{page number in head/foot}%

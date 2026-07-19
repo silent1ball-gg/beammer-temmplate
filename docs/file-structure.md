@@ -180,3 +180,93 @@ beamer-template/
   - **结果分析**（Section 5）：性能对比表格（`booktabs` 三线表），含基线模型与改进方案对比示例。
 - 组会幻灯片结构更新为 10 个 section：标题页 → 问题背景 → 本周概览 → 进展详情 → 结果展示 → 文献阅读（可选）→ 问题讨论 → 下周计划 → 致谢 → 附录。
 <!-- feature:groupmeeting-enhance:end -->
+
+<!-- feature:multi-design-interface:start -->
+## Feature Structure Update: multi-design-interface
+
+```text
+beamer-template/
+├── beamer-style.sty            ← 公共视觉接口与跨设计能力
+├── beamer-design-academic.sty  ← 默认学术蓝档案
+├── beamer-design-classic.sty   ← 正式经典档案
+└── beamer-design-midnight.sty  ← 深色技术档案
+```
+
+- `beamer-style.sty`：解析 `design=<name>`，载入档案，并提供各设计共用的字体、引用和页码行为。
+- `beamer-design-*.sty`：每个档案只实现主题和视觉 token；不得包含用户内容或编译流程逻辑。
+- `main.tex`、`main-groupmeeting.tex`：显式选择 `design=academic`，用户可替换为其他已提供的设计名。
+- `tests/design-smoke.tex`：用同一组标题、中文、block、附录内容回归验证每个设计档案。
+<!-- feature:multi-design-interface:end -->
+
+<!-- feature:weekly-report-workflow:start -->
+## Feature Structure Update: weekly-report-workflow
+
+### Current Structure Impact
+
+- 不修改视觉接口：`beamer-style.sty` 和 `beamer-design-*.sty` 保持不变。
+- 新增一份 Markdown 输入接口和一份独立的 Beamer 内容模板；`main-groupmeeting.tex` 继续作为带完整示例的组会预设。
+- `README.md` 更新为三个内容入口：答辩、组会示例、可复用周报工作流。
+
+### Proposed Changes
+
+```text
+beamer-template/
+├── weekly-report/             ← NEW：与根目录模板隔离的周报工作区
+│   ├── README.md               ← 周报工作流与编译说明
+│   ├── weekly-input.md         ← 每周记录与汇报前筛选的输入清单
+│   ├── main.tex                ← 可复制、可编译的周报内容模板
+│   ├── latexmkrc               ← 复用根目录构建配置
+│   └── img/                    ← 周报专用图片资源
+├── beamer-style.sty            ← MODIFIED：支持指定共享文献库路径
+└── docs/
+    ├── goal.md                ← MODIFIED：功能目标与验收标准
+    ├── mvp-flow.md            ← MODIFIED：实施和验证流程
+    ├── file-structure.md      ← MODIFIED：本功能的路径边界
+    └── decisions.md           ← MODIFIED：技术和兼容性决策
+```
+
+### Path Responsibilities
+
+- `weekly-report/weekly-input.md`：用户每周复制的工作项收集表。它是周报的语义接口，而非程序必须解析的数据格式。
+- `weekly-report/main.tex`：周报的呈现层。它只承载元数据和幻灯片内容，并通过父目录的 `beamer-style.sty` 选择既有设计。
+- `weekly-report/latexmkrc`：加载父目录的构建配置，以便从周报目录直接编译、并将中间产物留在本目录的 `build/` 中。
+- `weekly-report/README.md`：将输入清单、页面骨架、类型适配规则和 `latexmk` 命令连接为一条可执行工作流。
+- `docs/*.md`：记录此功能的范围、技术边界与验证策略；归档前快照保留在 `Archive/`。
+<!-- feature:weekly-report-workflow:end -->
+
+<!-- feature:weekly-report-framework:start -->
+## Feature Structure Update: weekly-report-framework
+
+### Current Structure Impact
+
+- `weekly-report/` 从“输入清单 + 每周手改 LaTeX”升级为数据驱动子系统；根目录模板、样式与设计档案不承载周报业务逻辑。
+- `main.tex` 保留为稳定渲染外壳，`report.yaml` 成为每周唯一的手工内容输入；生成的 TeX 不提交、不手改。
+
+### Proposed Changes
+
+```text
+weekly-report/
+├── report.yaml                 ← NEW：每周唯一的结构化输入
+├── main.tex                    ← MODIFIED：稳定 Beamer 外壳，加载 generated/ 内容
+├── Makefile                    ← NEW：make check / make report
+├── requirements.txt            ← NEW：渲染器的 PyYAML 依赖声明
+├── weekly-input.md             ← MODIFIED：YAML 字段字典与填写指南
+├── README.md                   ← MODIFIED：数据驱动周报的使用说明
+├── scripts/
+│   └── render_report.py        ← NEW：校验 YAML 并生成 TeX
+├── tests/
+│   └── test_render_report.py   ← NEW：接口、转义、适配器和失败路径测试
+├── generated/
+│   └── .gitignore              ← NEW：保留目录，忽略生成的 TeX
+└── img/                        ← 周报图片；YAML 仅可引用此目录中的文件
+```
+
+### Path Responsibilities
+
+- `report.yaml`：汇报内容的唯一事实源，包含字段值与图片引用；用户每周只编辑此文件和 `img/`。
+- `scripts/render_report.py`：把受限数据接口重建为 `preamble.tex` 与 `content.tex`；负责校验和 LaTeX 特殊字符转义。
+- `main.tex`：不含周度内容，只声明 Beamer 公共样式并加载 `generated/` 文件。
+- `Makefile`：提供一条从数据到 PDF 的可重复命令；`generated/`：渲染产物，不应手改。
+- `tests/test_render_report.py`：验证五种类型适配、文本转义、字段约束和图片路径边界。
+- `weekly-input.md` / `README.md`：面向人的字段解释、类型适配规则与工作流说明。
+<!-- feature:weekly-report-framework:end -->

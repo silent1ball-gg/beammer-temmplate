@@ -1,5 +1,9 @@
 # Decisions
 
+## Decision: appendix does not create its own title page
+
+The weekly-report renderer uses `\\appendix` without `\\section{附录}`. In the academic Beamer design, the latter created an extra content-free title page, while the former preserves appendix numbering and makes every appendix page correspond to actual content. Validated by the end-to-end PDF review on 2026-07-19.
+
 ## Long-Term Maintainable Technical Route
 
 **路线：LaTeX Beamer 文档类 + XeLaTeX 编译器 + latexmk 构建，样式与内容分离（`.sty` + `.tex`）。**
@@ -163,3 +167,97 @@
 - **依赖约束**：零新增依赖。`\ifbeamer@inappendix`、`\insertframenumberinappendix`、`\pgfkeys` 均为 Beamer/pgf 内核。
 - **质量约束**：两个模板的附录帧注释密度与现有帧保持一致。
 <!-- feature:appendix-pages:end -->
+
+<!-- feature:multi-design-interface:start -->
+## Feature Decision: multi-design-interface
+
+### Chosen Interface
+
+内容模板通过一项稳定声明选择视觉实现：
+
+```latex
+\usepackage[design=academic]{beamer-style}
+```
+
+`beamer-style.sty` 是公共接口层，保留 XeLaTeX 检查、CJK 字体、`biblatex`、表格、附录页码和公共 Beamer 模板。每个 `beamer-design-<name>.sty` 档案只负责：基础 Beamer 主题、调色板、标题和 block 的视觉处理。
+
+| 设计 | 基础主题 | 用途 |
+|------|----------|------|
+| `academic` | metropolis | 原有的默认学术蓝风格 |
+| `classic` | Madrid | 更传统的正式/机构汇报 |
+| `midnight` | metropolis | 深色高对比技术分享 |
+
+### Preserved Invariants
+
+- 同一份 `main.tex` 或 `main-groupmeeting.tex` 内容可在所有设计下编译。
+- 字体、参考文献、附录页码、图片路径、`latexmk` 命令和 16:9 比例不因设计而改变。
+- 设计档案不承载内容结构，也不改变用户数据（标题、作者、frame 内容）。
+
+### Boundary
+
+接口只保证上述公共能力和常见 Beamer 内容环境的兼容。某一设计专属的导航、色彩或布局细节不应被内容模板依赖；需要新增设计专属组件时，应先判断它是否应提升为公共接口。
+<!-- feature:multi-design-interface:end -->
+
+<!-- feature:weekly-report-workflow:start -->
+## Feature Decision: weekly-report-workflow
+
+### Long-Term Route Fit
+
+- 继续采用「Markdown 记录接口 + 独立 `.tex` 内容模板 + 共用 `.sty` 样式接口」的本地、纯文本路线；它与现有 XeLaTeX + Beamer + latexmk 技术栈一致，并让内容演进不影响视觉层。
+- 不引入 Markdown 转换器或数据库：周报的核心难点是筛选与叙事判断，而不是格式转换；先保留可读、可手工调整的输入与输出。
+
+### Chosen Approach
+
+- 在独立的 `weekly-report/` 目录中新增 `weekly-input.md` 作为任务相关接口，固定每项工作的七个字段：目标、变化、证据、状态、影响、阻碍/请求、下一步。
+- 在该目录中新增 `main.tex` 作为重建层：封面/结论 → 概览 → 1--2 个重点 → 问题讨论 → 下周计划 → Q\&A → 附录。
+- `beamer-style.sty` 增加可选的 `bibresource` 参数，因此独立周报目录能显式复用根目录的 `refs.bib`，而不复制或隐式查找文献库。
+- 保留 `main-groupmeeting.tex` 的丰富示例；它适合学习和改写，周报模板则优先保证高频、低摩擦的重复使用。
+
+### Compatibility and Migration
+
+- 零迁移成本：现有 `main.tex`、`main-groupmeeting.tex`、视觉设计档案和编译命令均不改变。
+- 新模板在 `weekly-report/` 中使用 `latexmk -jobname=weekly-report main.tex`，避免覆盖根目录的 PDF，也不会将周报源文件与根目录模板混放。
+- 用户可复制整个 `weekly-report/` 目录或其中的 `main.tex`、`weekly-input.md` 留存；如果将其移出项目，需相应调整指向父目录样式和文献库的相对路径。
+
+### Open Questions
+
+- 无阻塞问题。后续如用户要求自动生成，再决定是否将输入清单升级为受约束的 YAML 格式。
+
+### Constraints
+
+- 一份周报默认面向 8--15 分钟汇报，正文宜控制在 7--9 页；细节放在附录。
+- 输入清单仅保证决策相关信息被保留，不试图保留工作过程的全部细节。
+- 本功能沿用项目的 XeLaTeX、中文字体和本地编译环境限制。
+<!-- feature:weekly-report-workflow:end -->
+
+<!-- feature:weekly-report-framework:start -->
+## Feature Decision: weekly-report-framework
+
+### Long-Term Route Fit
+
+- 保持 XeLaTeX + Beamer + latexmk 的长期排版路线；仅在内容层加入一个小型、可审查的 Python 编译步骤。YAML 是源数据，TeX 是可再生的呈现中间产物。
+- 不采用通用 Markdown→LaTeX 转换器或复杂模板引擎：周报的字段和布局是受限、稳定的，专用渲染器更容易验证、转义和维护。
+
+### Chosen Approach
+
+- 使用 Python 3 + PyYAML 的 `safe_load` 读取 `report.yaml`，将输入校验与渲染逻辑放在一个零网络、单文件脚本中。
+- 渲染器按 `type` 使用五种适配器（experiment、engineering、reading、writing、coordination），但每种都重建为相同的“目标 → 变化/证据 → 影响 → 下一步”叙事接口。
+- `main.tex` 通过 `\input{generated/preamble.tex}` 和 `\input{generated/content.tex}` 加载生成内容；`Makefile` 固定生成与编译顺序。
+
+### Compatibility and Migration
+
+- 既有 `weekly-input.md` 保留为字段说明，现有手工 `main.tex` 内容由新的稳定外壳替代；用户在升级后将当周内容填写进 `report.yaml`。
+- `make report` 输出仍为 `weekly-report.pdf`，沿用本目录 `latexmkrc` 和父目录样式/参考文献路径；根目录命令与模板不变。
+- 生成目录忽略 `*.tex`，避免用户意外提交或手改可再生产物。
+- 渲染器只写入 `generated/preamble.tex` 与 `generated/content.tex`；测试使用 Python 标准库 `unittest`，不增加新的测试依赖。
+
+### Open Questions
+
+- 无阻塞问题。当前决定不支持 YAML 中的原始 LaTeX；若未来确有公式或复杂表格需求，再审慎增加显式、受限的富文本字段。
+
+### Constraints
+
+- 文本字段一律自动转义；这意味着 YAML 不能直接书写 LaTeX 命令。
+- 图片路径必须相对 `weekly-report/` 并位于 `img/` 中；支持 png、jpg、jpeg、pdf。
+- 重点工作项限制为 0--2 个，概览工作项限制为 1--5 个，以保护 8--15 分钟汇报的页面密度。
+<!-- feature:weekly-report-framework:end -->

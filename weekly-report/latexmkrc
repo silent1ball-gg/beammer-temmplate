@@ -1,0 +1,3 @@
+# Reuse the repository-wide XeLaTeX and auxiliary-file configuration.
+# Paths are resolved from this weekly-report directory.
+do '../latexmkrc';

@@ -220,3 +220,94 @@
 - [x] 新增 3 帧均含示例内容 + 替换说明注释。✅
 - [x] `main.tex` 回归编译不受影响（19 页）。✅
 <!-- feature:groupmeeting-enhance:end -->
+
+<!-- feature:multi-design-interface:start -->
+## Feature: multi-design-interface
+
+### User Request
+
+当前 Beamer 只有一种设计，希望将多种视觉设计纳入同一体系。
+
+### Purpose Analysis
+
+- 内容场景（答辩、组会）与视觉设计是两个独立维度；用户应能在不重写幻灯片内容的前提下切换呈现风格。
+- 核心任务改进：从“复制一份模板并手改主题、颜色、页眉页脚”缩短为“在一行中选择设计”。
+- 最小范围：提供统一的 `design` 选择接口和三种已验证设计，而非抽象所有 Beamer 主题的全部能力。
+
+### Success Criteria
+
+- [x] 任一内容模板通过 `\usepackage[design=<name>]{beamer-style}` 选择设计。
+- [x] 提供 academic、classic、midnight 三种视觉设计，且共享中文字体、参考文献、附录页码和构建流程。
+- [x] 默认 `academic` 与原学术蓝视觉保持一致。
+- [x] README 说明场景与设计可自由组合，以及新增设计的职责边界。
+<!-- feature:multi-design-interface:end -->
+
+<!-- feature:weekly-report-workflow:start -->
+## Feature: weekly-report-workflow
+
+### User Request
+
+落实每周工作汇报 workflow：用统一输入清单将不同类型工作编译为基于现有 Beamer 样式的可复用周报。
+
+### Purpose Analysis
+
+- 用户需要在每周内容不同的情况下，稳定、快速地完成一次能支持讨论和决策的汇报；不是再获得一份带示例的组会幻灯片。
+- 首个用户是每周/双周参加课题组汇报的研究者；核心任务是把实验、代码、阅读、写作和协作事项压缩成可验证的进展、风险和下一步请求。
+- 这是既有「组会汇报」预设场景的直接增强：它复用现有 XeLaTeX、Beamer 和视觉设计接口，因此属于正式产品能力，而非不确定的实验。
+
+### Minimum Feature Scope
+
+- 在独立的 `weekly-report/` 目录中提供一份可复制的周度输入清单，统一记录每项工作的目标、变化、证据、状态、阻碍/请求和下一步。
+- 在该目录中提供独立的 `main.tex` 内容模板，将上述输入编译成固定的叙事骨架：结论、概览、重点、讨论、计划和附录。
+- 在 README 中说明「记录 → 筛选 → 填充 → 编译 → 回查」的最小闭环，以及每种工作类型如何映射到重点页。
+
+### Non-Goals
+
+- 不自动从 Markdown、任务管理器或 Git 提交生成幻灯片。
+- 不修改任一视觉设计档案；`beamer-style.sty` 仅增加共享文献库路径选项，不改变既有默认行为。
+- 不创建按周归档、日历提醒或协作审批系统；用户可按自身版本管理习惯保存历史周报。
+- 不替换现有的 `main-groupmeeting.tex` 示例模板。
+
+### Success Criteria
+
+- [x] 用户可以用 `weekly-report/weekly-input.md` 在汇报前归纳异质工作，而不必先决定每页 LaTeX 怎么写。
+- [x] `weekly-report/main.tex` 覆盖一份周报的完整主路径，并在默认 academic 设计下无错误编译。
+- [x] 模板中的每个重点工作项均能明确呈现目标、证据、结论/影响和下一步；问题页包含所需决策或帮助。
+- [x] README 给出可执行的编译命令、页面选择规则和周后回查方法。
+- [x] `main.tex` 与 `main-groupmeeting.tex` 的既有编译路径保持可用。
+<!-- feature:weekly-report-workflow:end -->
+
+<!-- feature:weekly-report-framework:start -->
+## Feature: weekly-report-framework
+
+### User Request
+
+将周报升级为统一框架：每周只填写结构化数据和图片，由渲染器自动生成 Beamer 内容并一键编译 PDF。
+
+### Purpose Analysis
+
+- 用户不应每周在输入清单和 LaTeX 幻灯片之间重复翻译同一份信息；真实目标是一份数据只填写一次、稳定地产出可讨论的周报。
+- 首个用户是持续做周报的研究者；其核心任务是录入结论、工作项、证据、请求和计划，然后在不触碰页面结构的前提下得到 PDF。
+- 这项能力是现有 `weekly-report/` 工作流的正式演进：它减少高频手工同步，却保留现有 Beamer 样式和本地编译路线，因此直接纳入产品而非作为实验。
+
+### Minimum Feature Scope
+
+- 以 `weekly-report/report.yaml` 作为唯一周度内容源，支持元信息、结论、工作项、图片证据、讨论请求、下周计划和附录。
+- 新增一个本地 Python 渲染器，校验数据并生成 `generated/preamble.tex` 与 `generated/content.tex`；稳定的 `main.tex` 只负责加载它们和共用样式。
+- 提供 `make report`，串起“渲染 → XeLaTeX/Biber 编译”的单一命令；提供 `make check` 只校验输入。
+
+### Non-Goals
+
+- 不自动总结 Git 提交、论文、任务管理器或聊天记录；研究判断仍由用户填写。
+- 不提供网页编辑器、云同步、多用户协作或任务提醒。
+- 不支持任意 LaTeX 片段作为 YAML 文本字段；渲染器默认转义特殊字符，避免数据破坏文档。
+- 不替换根目录的答辩/组会示例模板，也不改变视觉设计档案。
+
+### Success Criteria
+
+- [x] `report.yaml` 足以生成完整周报，且不需要再编辑 `main.tex`。
+- [x] 渲染器拒绝缺失必填字段、超过两个重点工作项、未知类型与不安全/不存在的图片路径。
+- [x] 实验、工程、阅读、写作与协作工作均能映射为对应的重点进展页，且保留共同的目标、证据、影响和下一步字段。
+- [x] `make check` 与 `make report` 可在 `weekly-report/` 目录运行；后者生成 PDF。
+- [x] 输入文本中的 `%`、`_`、`&` 等字符不会导致 LaTeX 编译失败，既有模板仍可编译。
+<!-- feature:weekly-report-framework:end -->

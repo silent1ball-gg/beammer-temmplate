@@ -8,7 +8,8 @@
 - ✅ 开箱即用，`latexmk` 一键编译
 - ✅ 样式与内容分离（`.sty` + `.tex`）
 - ✅ 中文完美支持（PingFang SC / 苹方-简）
-- ✅ **两种预设场景**：学术答辩 + 组会汇报，按需选用
+- ✅ **三种内容入口**：学术答辩、组会示例、每周工作汇报 workflow
+- ✅ **三种视觉设计**：学术蓝、正式经典、深色技术分享；内容无需改动
 - ✅ 6+ 种常用 slide 类型：标题页、目录、正文、图表、问题讨论、参考文献
 - ✅ **附录备份幻灯片**：正文后附录帧，页码自动切换为 A-1, A-2, ...
 - ✅ 16:9 宽屏比例，适配现代投影仪
@@ -27,14 +28,44 @@
 
 ## 预设场景
 
-本项目提供 **两种预设场景**，根据你的实际需求选择对应的模板文件：
+本项目提供三个内容入口，根据你的实际需求选择对应的模板或工作目录：
 
 | 场景 | 模板文件 | 适用场合 | 典型结构 |
 |------|----------|----------|----------|
 | **学术答辩** | `main.tex` | 学位论文答辩、开题报告、中期检查 | 标题 → 目录 → 研究背景 → 相关工作 → 研究方法 → 实验结果 → 总结展望 → 致谢 → 参考文献 |
 | **组会汇报** | `main-groupmeeting.tex` | 每周/双周课题组进展汇报 | 标题 → 问题背景 → 本周概览 → 进展详情 → 结果展示 → 问题讨论 → 下周计划 → 致谢 → 附录 |
+| **周报 workflow** | `weekly-report/` | 高频、内容类型每周变化的工作汇报 | 输入清单 → 结论 → 概览 → 重点进展 → 讨论 → 下周计划 → 附录 |
 
-> 💡 **选择建议**：正式答辩用 `main.tex`（约 12-17 页），日常组会用 `main-groupmeeting.tex`（约 7 页）。两个模板共享同一个 `beamer-style.sty` 样式文件，视觉风格完全一致。
+> 💡 **选择建议**：正式答辩用 `main.tex`；需要一份完整示例来改写时用 `main-groupmeeting.tex`；希望将每周不同的工作内容收集、筛选并稳定呈现时，使用独立的 `weekly-report/` 目录。三者共享同一个 `beamer-style.sty` 样式文件。
+
+## 每周工作汇报 workflow
+
+`weekly-report/` 是和根目录模板隔离的数据驱动周报工作区。每周只编辑 `report.yaml` 并添加图片；稳定的 `main.tex` 会加载自动生成的内容，同时复用父目录的样式与文献库。
+
+```bash
+cd weekly-report
+make report
+```
+
+`make report` 会依次校验 YAML、生成 TeX 并编译 `weekly-report.pdf`；不再需要每周编辑 `main.tex`。字段说明见 [`weekly-report/weekly-input.md`](weekly-report/weekly-input.md)，完整用法见 [`weekly-report/README.md`](weekly-report/README.md)。
+
+## 视觉设计
+
+场景模板负责“讲什么”，视觉设计负责“如何呈现”。两者可以自由组合：答辩和组会都可使用任一设计，切换时不需要改动任何 frame 内容。
+
+| 设计 | 选择值 | 适用场合 | 视觉特点 |
+|------|--------|----------|----------|
+| **学术蓝** | `academic` | 答辩、开题、常规学术报告 | 默认；现代、明亮、稳重 |
+| **正式经典** | `classic` | 学院汇报、评审、正式会议 | Madrid 顶部导航，更传统、机构化 |
+| **深夜技术** | `midnight` | 技术分享、演示屏幕、暗环境 | 深色背景、高对比青色强调 |
+
+在任一模板开头替换这一行即可切换：
+
+```latex
+\usepackage[design=midnight]{beamer-style}
+```
+
+`beamer-style.sty` 处理共同能力（中文字体、参考文献、附录页码、常用表格）；`beamer-design-*.sty` 只处理各设计的主题和配色。新增设计时按同一职责新增一个档案即可。
 
 ## 快速开始
 
@@ -148,8 +179,8 @@ code beamer-template
 
 编辑 `beamer-style.sty`：
 
-- **切换主题**：修改 `\usetheme{metropolis}` 为 `Madrid`、`CambridgeUS` 等
-- **更改配色**：修改 `\definecolor{AccentBlue}{HTML}{005A9C}` 中的色值
+- **切换设计**：在 `main.tex` 或 `main-groupmeeting.tex` 中修改 `design=academic` 为 `classic` 或 `midnight`
+- **自定义某个设计**：编辑对应的 `beamer-design-academic.sty`、`beamer-design-classic.sty` 或 `beamer-design-midnight.sty`
 - **更换字体**：修改 `\setCJKsansfont{PingFang SC}` 为其他字体名
 - **调整页脚**：修改 `\setbeamertemplate{footline}{...}`
 
@@ -190,7 +221,9 @@ code beamer-template
 |------|------|
 | `main.tex` | 学术答辩模板，填写演示内容（元数据 + 各 Section 幻灯片） |
 | `main-groupmeeting.tex` | **组会汇报模板**，填写本周进展（背景 → 概览 → 详情 → 结果 → 问题 → 计划） |
-| `beamer-style.sty` | 样式配置（主题、颜色、字体、页脚、参考文献设置），两种场景共享 |
+| `weekly-report/` | **独立周报框架**：YAML 唯一输入、自动 TeX 渲染、一键编译和图片资源 |
+| `beamer-style.sty` | 样式接口（设计选择、字体、页脚、参考文献设置），两种场景共享 |
+| `beamer-design-*.sty` | 视觉设计档案：分别实现 academic、classic、midnight 的主题和配色 |
 | `refs.bib` | BibTeX 参考文献数据库 |
 | `latexmkrc` | latexmk 编译配置（xelatex 引擎 + `build/` 中间产物目录） |
 | `build/` | 编译中间产物目录（自动生成，已 git-ignore） |
@@ -209,7 +242,7 @@ code beamer-template
 ```
 
 ### Q: 编译后英文用的不是 Fira Sans 字体
-**A:** 这是一个已知限制（见 [decisions.md](docs/decisions.md)）。macOS 的 XeTeX 无法通过字体名找到 TeX Live 中的 Fira Sans，会自动回退到 Latin Modern Sans。如需修复，可在 `beamer-style.sty` 中用文件路径方式显式指定 Fira 字体。
+**A:** 这是一个已知限制（见 [decisions.md](Beamer-template/docs/decisions.md)）。macOS 的 XeTeX 无法通过字体名找到 TeX Live 中的 Fira Sans，会自动回退到 Latin Modern Sans。如需修复，可在 `beamer-style.sty` 中用文件路径方式显式指定 Fira 字体。
 
 ### Q: 如何更改屏幕比例为 4:3？
 **A:** 编辑对应 `.tex` 文件第一行，将 `aspectratio=169` 改为 `aspectratio=43`。
@@ -236,7 +269,11 @@ beamer-template/
 ├── README.md                  ← 你正在看
 ├── main.tex                   ← 学术答辩模板
 ├── main-groupmeeting.tex      ← 组会汇报模板
-├── beamer-style.sty           ← 样式文件，编辑外观
+├── weekly-report/             ← 独立的每周工作汇报 workflow
+├── beamer-style.sty           ← 样式接口，选择设计 + 公共能力
+├── beamer-design-academic.sty ← 学术蓝设计
+├── beamer-design-classic.sty  ← 正式经典设计
+├── beamer-design-midnight.sty ← 深夜技术设计
 ├── refs.bib                   ← 参考文献
 ├── latexmkrc                  ← 编译配置
 ├── .gitignore

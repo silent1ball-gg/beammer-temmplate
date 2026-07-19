@@ -1,0 +1,43 @@
+% Smoke test for every beamer-style design profile.
+% Run from the repository root, for example:
+% xelatex -output-directory=build -jobname=smoke-classic
+%   '\def\DesignName{classic}\input{tests/design-smoke.tex}'
+
+\providecommand{\DesignName}{academic}
+\documentclass[aspectratio=169]{beamer}
+
+% Expand the command-line design name before package-option parsing.
+\edef\beamerstyleload{\noexpand\usepackage[design=\DesignName]{beamer-style}}
+\beamerstyleload
+
+\title{设计接口验证}
+\author{Beamer Template}
+\date{2026}
+
+\begin{document}
+
+\begin{frame}[shrink]
+  \titlepage
+\end{frame}
+
+\begin{frame}{公共内容环境}
+  \begin{itemize}
+    \item 中文、English、\textbf{强调文本}和 \alert{提示文本}
+    \item 设计档案只改变呈现方式，不改变内容结构
+  \end{itemize}
+
+  \begin{block}{普通块}
+    所有设计必须支持常见的 Beamer block。
+  \end{block}
+
+  \begin{exampleblock}{示例块}
+    以及 exampleblock 和页码页脚。
+  \end{exampleblock}
+\end{frame}
+
+\appendix
+\begin{frame}{附录}
+  正文与附录的页码规则也属于公共接口。
+\end{frame}
+
+\end{document}
